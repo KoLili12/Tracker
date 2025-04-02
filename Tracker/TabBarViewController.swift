@@ -21,9 +21,10 @@ class TabBarViewController: UITabBarController {
         
         let trackersViewController = TrackersViewController()
         let statisticsViewController = StatisticsViewController()
+        let navigationVC = UINavigationController(rootViewController: trackersViewController)
         
         
-        trackersViewController.tabBarItem = UITabBarItem(
+        navigationVC.tabBarItem = UITabBarItem(
             title: "Трекеры",
             image: UIImage(named: "TrackerTabBarItem"),
             selectedImage: nil
@@ -35,10 +36,10 @@ class TabBarViewController: UITabBarController {
             selectedImage: nil
         )
         
-        trackersViewController.tabBarItem.imageInsets =  UIEdgeInsets(top: 9.57, left: 6, bottom: 9.12, right: 6)
+        navigationVC.tabBarItem.imageInsets =  UIEdgeInsets(top: 9.57, left: 6, bottom: 9.12, right: 6)
         statisticsViewController.tabBarItem.imageInsets =  UIEdgeInsets(top: 5, left: 28, bottom: 5.37, right: 28)
         
-        self.viewControllers = [trackersViewController, statisticsViewController]
+        self.viewControllers = [navigationVC, statisticsViewController]
         
         tabBar.addSubview(TabBarSeparator)
         
