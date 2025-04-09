@@ -78,6 +78,8 @@ class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = UIColor(named: "TrackerWhite")
+        
         collectionView.delegate = self
         collectionView.dataSource = self
         
@@ -116,10 +118,10 @@ class TrackersViewController: UIViewController {
         let button = UIButton.systemButton(
             with: UIImage(named: "TrackerPlus") ?? UIImage(),
             target: self,
-            action: #selector(self.didTubPlusButton)
+            action: #selector(self.didTabPlusButton)
         )
         
-        button.tintColor = .black
+        button.tintColor = UIColor(named: "TrackerBlack")
         button.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -160,8 +162,10 @@ class TrackersViewController: UIViewController {
         collectionView.reloadData()
     }
     
-    @objc func didTubPlusButton() {
-        
+    @objc func didTabPlusButton() {
+        let vc = ChooseTrackerTypeViewController()
+        let nc = UINavigationController(rootViewController: vc)
+        present(nc, animated: true)
     }
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
