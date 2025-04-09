@@ -9,6 +9,13 @@ import UIKit
 
 class TrackerCollectionViewCell: UICollectionViewCell {
     
+    // private(set) var isSelectedButton = false
+    // private var countDays = 0
+    
+    var indexPath: IndexPath?
+    
+    var delegate: TrackersViewControllerDelegate?
+    
     // MARK: - Internal properties
     
     lazy var cardView: UIImageView = {
@@ -58,19 +65,22 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     
     lazy var countDaysLabel: UILabel = {
         let label = UILabel()
-        label.text = "5 дней"
+        label.text = "0 дней"
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
+    var markTrackerButton: UIButton?
+    
     // MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        let markTrackerButton = createMarkTrackerButton()
+        markTrackerButton = createMarkTrackerButton()
+        guard let markTrackerButton = markTrackerButton else { return }
         
         contentView.addSubview(cardView)
         contentView.addSubview(markTrackerButton)
@@ -113,7 +123,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     // MARK: - Private functions
     
     private func createMarkTrackerButton() -> UIButton {
-        let button = UIButton()
+        let button = UIButton(type: .custom)
         button.addTarget(self, action: #selector(didTapMarkTrackerButton), for: .touchUpInside)
         button.setTitle("+", for: .normal)
         button.setTitleColor(.white, for: .normal)
@@ -129,6 +139,33 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func didTapMarkTrackerButton() {
-        print(5)
+        delegate?.updateDaysCount(cell: self)
+    }
+    
+    func changeMarkTrackerButton(isSelectedButton: Bool, countDays: Int) {
+        guard let markTrackerButton = markTrackerButton else { return }
+        if isSelectedButton {
+            markTrackerButton.alpha = 0.3
+            markTrackerButton.setTitle("", for: .normal)
+            markTrackerButton.setImage(UIImage(named: "CheckMark"), for: .normal)
+            
+            markTrackerButton.imageView?.translatesAutoresizingMaskIntoConstraints = false
+            
+            guard let imageView = markTrackerButton.imageView else { return }
+            
+            NSLayoutConstraint.activate([
+                imageView.heightAnchor.constraint(equalToConstant: 12),
+                imageView.widthAnchor.constraint(equalToConstant: 12),
+                imageView.centerXAnchor.constraint(equalTo: markTrackerButton.centerXAnchor),
+                imageView.centerYAnchor.constraint(equalTo: markTrackerButton.centerYAnchor)
+            ])
+        } else {
+            markTrackerButton.setTitle("+", for: .normal)
+            markTrackerButton.alpha = 1
+            markTrackerButton.setImage(UIImage(), for: .normal)
+        }
+        countDaysLabel.text = "\(countDays) дней"
     }
 }
+
+

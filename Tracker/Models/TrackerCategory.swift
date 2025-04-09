@@ -8,6 +8,13 @@
 import UIKit
 
 struct TrackerCategory {
+    let id: UUID
     let header: String
-    let tracks: [Tracker]
+    let trackers: [Tracker]
+    
+    init(header: String, trackers: [Tracker]) {
+        self.id = UUID()
+        self.header = header
+        self.trackers = trackers
+    }
 }

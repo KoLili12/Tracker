@@ -9,5 +9,12 @@ import UIKit
 
 struct TrackerRecord {
     let id: UUID
-    let date: String
+    let tracker: Tracker
+    let date: Date
+    
+    init(tracker: Tracker, date: Date) {
+        self.id = UUID()
+        self.tracker = tracker
+        self.date = date
+    }
 }
