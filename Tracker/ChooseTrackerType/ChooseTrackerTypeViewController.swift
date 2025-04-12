@@ -9,6 +9,8 @@ import UIKit
 
 class ChooseTrackerTypeViewController: UIViewController {
     
+    weak var delegate: CreateTrackerDelegate?
+    
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -61,7 +63,7 @@ class ChooseTrackerTypeViewController: UIViewController {
     
     private func createAddIrregularEventsButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Добавить непрерывные события", for: .normal)
+        button.setTitle("Нерегулярные событие", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: "TrackerBlack")
@@ -76,8 +78,10 @@ class ChooseTrackerTypeViewController: UIViewController {
     
     @objc private func addHabitButtonTapped() {
         let vc = AddHabitViewController()
+        vc.delegate = delegate
         let nc = UINavigationController(rootViewController: vc)
         present(nc, animated: true)
+        // navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func addIrregularEventsButtonTapped() {

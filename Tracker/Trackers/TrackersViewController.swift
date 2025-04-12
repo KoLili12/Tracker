@@ -164,7 +164,10 @@ class TrackersViewController: UIViewController {
     
     @objc func didTabPlusButton() {
         let vc = ChooseTrackerTypeViewController()
+        vc.delegate = self
         let nc = UINavigationController(rootViewController: vc)
+        vc.modalPresentationStyle = .pageSheet
+        // navigationController?.pushViewController(vc, animated: false)
         present(nc, animated: true)
     }
     
@@ -248,6 +251,14 @@ extension TrackersViewController: TrackersViewControllerDelegate {
         guard let indexPath = cell.indexPath else { return 0 }
         let tracker = service.getTracker(in: indexPath.section, at: indexPath.row)
         return service.countTrackerCompletedTrackers(tracker: tracker)
+    }
+}
+
+extension TrackersViewController: CreateTrackerDelegate {
+    func createTracker(tracker: Tracker, categoryName: String) {
+        service.addTrackers(tracker: tracker, for: categoryName)
+        print(service.getCategories())
+        collectionView.reloadData()
     }
 }
 

@@ -28,14 +28,12 @@ final class TrackersService: TrackersServiceProtocol {
         TrackerCategory(header: "Домашний уют", trackers: [
             Tracker(
                 name: "Поливать растения",
-                type: .habit,
                 color: UIColor(named: "TrackerGreen") ?? UIColor(),
                 emoji: "❤️",
                 schedule: [.monday, .thursday, .sunday]
             ),
             Tracker(
                 name: "Кошка заслонила камеру на созвоне",
-                type: .habit,
                 color: UIColor(named: "TrackerRed") ?? UIColor(),
                 emoji: "🌺",
                 schedule: [.thursday, .friday]
@@ -45,12 +43,12 @@ final class TrackersService: TrackersServiceProtocol {
         TrackerCategory(header: "Радостные мелочи", trackers: [
             Tracker(
                 name: "Бабушка прислала открытку в вотсапе",
-                type: .habit,
                 color: UIColor(named: "TrackerOrange") ?? UIColor(),
                 emoji: "😻",
                 schedule: [.monday, .thursday, .friday]
-            )]
-                       )
+            )
+           ]
+        )
     ]
 
     private var completedTrackers: [TrackerRecord] = []
@@ -65,13 +63,19 @@ final class TrackersService: TrackersServiceProtocol {
     
     func addTrackers(tracker: Tracker, for categoryName: String) {
         var newCategories: [TrackerCategory] = []
+        var flag = false // есть ли новая категория в categories?
         categories.forEach { category in
             if category.header == categoryName {
                 let newCategory = TrackerCategory(header: category.header, trackers: category.trackers + [tracker])
                 newCategories.append(newCategory)
+                flag = true
             } else {
                 newCategories.append(category)
             }
+        }
+        
+        if !flag {
+            newCategories.append(TrackerCategory(header: categoryName, trackers: [tracker]))
         }
         categories = newCategories
     }

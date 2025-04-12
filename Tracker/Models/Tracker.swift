@@ -10,30 +10,22 @@ import UIKit
 struct Tracker {
     let id: UUID
     let name: String
-    let type: TrackerType
     let color: UIColor
     let emoji: String
-    let schedule: [WeekDay]
+    let schedule: Set<WeekDay>
     
     init(
          name: String,
-         type: TrackerType,
          color: UIColor,
          emoji: String,
-         schedule: [WeekDay]
+         schedule: Set<WeekDay>
     ) {
         self.id = UUID()
         self.name = name
-        self.type = type
         self.color = color
         self.emoji = emoji
         self.schedule = schedule
     }
-}
-
-enum TrackerType {
-    case habit        // Привычка
-    case irregularEvent  // Нерегулярное событие
 }
 
 enum WeekDay: Int {
