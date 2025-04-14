@@ -8,6 +8,9 @@
 import UIKit
 
 class StatisticsViewController: UIViewController {
+    
+    // MARK: - Override func
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "TrackerWhite")

@@ -1,23 +1,21 @@
 //
-//  AddHabitViewController.swift
+//  AddIrregularEventViewController.swift
 //  Tracker
 //
-//  Created by Николай Жирнов on 09.04.2025.
+//  Created by Николай Жирнов on 14.04.2025.
 //
 
 import UIKit
 
-class AddHabitViewController: UIViewController {
+class AddIrregularEventViewController: UIViewController {
     
     // MARK: - Internal properties
-    
-    let tableViewData: [String] = ["Категория", "Расписание"]
     
     weak var delegate: CreateTrackerDelegate?
     
     var trackerName: String?
     var trackerCategory: String? = "Важное"
-    var trackerSchedule: Set<WeekDay> = []
+    var trackerSchedule: Set<WeekDay> = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
     var trackerEmoji: String? = "🎸"
     var trackerColor: UIColor? = .red
     
@@ -63,7 +61,7 @@ class AddHabitViewController: UIViewController {
     
     private lazy var cancelButton = createCancelButton()
     
-    // MARK: - Private create buttons functions
+    // MARK: - Override functions
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,7 +93,7 @@ class AddHabitViewController: UIViewController {
         ])
     }
     
-    // MARK: - Private create functions
+    // MARK: - Private create buttons functions
     
     private func createAddTrackerButton() -> UIButton {
         let button = UIButton(type: .system)
@@ -138,7 +136,6 @@ class AddHabitViewController: UIViewController {
     }
     
     @objc private func addButtonTapped() {
-        print("Добавить привычку")
         let tracker = Tracker(
             name: trackerName ?? "",
             color: trackerColor ?? UIColor(), emoji: trackerEmoji ?? "", schedule: trackerSchedule)
@@ -148,42 +145,6 @@ class AddHabitViewController: UIViewController {
     }
     
     // MARK: - Private functions
-    
-    private func createShScheduleText() -> String {
-        var resultText = ""
-        
-        if trackerSchedule.count == 7 {
-            resultText = "Каждый день"
-            return resultText
-        }
-        var flagSunday = false // включенно ли воскресенье?
-        
-        trackerSchedule.sorted { $0.rawValue < $1.rawValue }.forEach { (element) in
-            switch element {
-            case .monday:
-                resultText += "Пн, "
-            case .tuesday:
-                resultText += "Вт, "
-            case .wednesday:
-                resultText += "Ср, "
-            case .thursday:
-                resultText += "Чт, "
-            case .friday:
-                resultText += "Пт, "
-            case .saturday:
-                resultText += "Сб, "
-            case .sunday:
-                flagSunday = true
-            }
-        }
-        if flagSunday {
-            resultText += "Вс, "
-        }
-        if !resultText.isEmpty {
-            resultText.removeLast(2)
-        }
-        return resultText
-    }
     
     private func checkStateButton() {
         if trackerName != nil && trackerCategory != nil && trackerSchedule.count > 0 && trackerEmoji != nil && trackerColor != nil {
@@ -198,9 +159,8 @@ class AddHabitViewController: UIViewController {
 
 // MARK: - UITextFieldDelegate
 
-extension AddHabitViewController: UITextFieldDelegate {
+extension AddIrregularEventViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
-        print("Редактирование завершено, текст: \(textField.text ?? "")")
         guard let name = textField.text else { return }
         trackerName = name
         if trackerName == "" {
@@ -221,27 +181,20 @@ extension AddHabitViewController: UITextFieldDelegate {
 
 // MARK: - UITableViewDelegate
 
-extension AddHabitViewController: UITableViewDelegate {
+extension AddIrregularEventViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75 // Высота ячейки
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row % 2 != 0 {
-            let vc = ScheduleViewController(schedule: trackerSchedule)
-            vc.delegate = self
-            let nc = UINavigationController(rootViewController: vc)
-            present(nc, animated: true)
-        } else {
-            // TODO: - Добавить переход на экран выбора категории
-        }
+        // TODO: - Добавить переход на экран выбора категории
     }
 }
 
 // MARK: - UITableViewDataSource
 
-extension AddHabitViewController: UITableViewDataSource {
+extension AddIrregularEventViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tableViewData.count
+        1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -249,26 +202,11 @@ extension AddHabitViewController: UITableViewDataSource {
         cell.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
         cell.accessoryType = .disclosureIndicator
         cell.selectionStyle = .none
-        cell.textLabel?.text = tableViewData[indexPath.row]
+        cell.textLabel?.text = "Категория"
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        if indexPath.row == 0 {
-            cell.detailTextLabel?.text = "Важное"
-        } else {
-            cell.detailTextLabel?.text = createShScheduleText()
-        }
+        cell.detailTextLabel?.text = "Важное"
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.detailTextLabel?.textColor = UIColor(named: "TrackerGray")
         return cell
-    }
-}
-
-// MARK: - AddHabitViewControllerDelegate
-
-extension AddHabitViewController: AddHabitViewControllerDelegate {
-    func reloadData(newSchedule: Set<WeekDay>) {
-        trackerSchedule = newSchedule
-        checkStateButton()
-        tableView.reloadData()
-        print(trackerSchedule)
     }
 }

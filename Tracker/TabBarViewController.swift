@@ -9,12 +9,16 @@ import UIKit
 
 class TabBarViewController: UITabBarController {
     
+    // MARK: - Private view functions
+    
     private lazy var TabBarSeparator: UIView = {
         let lineView = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
         lineView.backgroundColor = UIColor(named: "TrackerGray")
         lineView.translatesAutoresizingMaskIntoConstraints = false
         return lineView
     }()
+    
+    // MARK: - Override functions
     
     override func viewDidLoad() {
         super.viewDidLoad()

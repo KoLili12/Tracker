@@ -9,7 +9,11 @@ import UIKit
 
 class ChooseTrackerTypeViewController: UIViewController {
     
+    // MARK: - Internal properties
+    
     weak var delegate: CreateTrackerDelegate?
+    
+    // MARK: - Private view properties
     
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
@@ -19,13 +23,15 @@ class ChooseTrackerTypeViewController: UIViewController {
         return stackView
     }()
 
+    // MARK: - Override functions
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .white
         
         let addHabitButton = createAddHabitButton()
-        let addIrregularEventsButton = createAddIrregularEventsButton()
+        let addIrregularEventsButton = createAddIrregularEventButton()
         
         navigationItem.title = "Создание трекера"
         self.navigationController?.navigationBar.titleTextAttributes = [
@@ -46,6 +52,8 @@ class ChooseTrackerTypeViewController: UIViewController {
         ])
     }
     
+    // MARK: - Private create buttons functions
+    
     private func createAddHabitButton() -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle("Добавить привычку", for: .normal)
@@ -61,7 +69,7 @@ class ChooseTrackerTypeViewController: UIViewController {
         return button
     }
     
-    private func createAddIrregularEventsButton() -> UIButton {
+    private func createAddIrregularEventButton() -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle("Нерегулярные событие", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -76,15 +84,19 @@ class ChooseTrackerTypeViewController: UIViewController {
         return button
     }
     
+    // MARK: - @objc private functions
+    
     @objc private func addHabitButtonTapped() {
         let vc = AddHabitViewController()
         vc.delegate = delegate
         let nc = UINavigationController(rootViewController: vc)
         present(nc, animated: true)
-        // navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func addIrregularEventsButtonTapped() {
-        print("add irregular events tapped")
+        let vc = AddIrregularEventViewController()
+        vc.delegate = delegate
+        let nc = UINavigationController(rootViewController: vc)
+        present(nc, animated: true)
     }
 }

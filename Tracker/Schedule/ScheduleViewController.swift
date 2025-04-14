@@ -9,10 +9,16 @@ import UIKit
 
 class ScheduleViewController: UIViewController {
     
-    let scheduleUI: [String] = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
-    var schedule: Set<WeekDay>
+    // MARK: - Private properties
+    
+    private let scheduleUI: [String] = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    private var schedule: Set<WeekDay>
+    
+    // MARK: - Internal properties
     
     weak var delegate: AddHabitViewControllerDelegate?
+    
+    // MARK: - Private view properties
     
     lazy private var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
@@ -24,6 +30,8 @@ class ScheduleViewController: UIViewController {
         return tableView
     }()
     
+    // MARK: - Init
+    
     init(schedule: Set<WeekDay>) {
         self.schedule = schedule
         super.init(nibName: nil, bundle: nil)
@@ -32,6 +40,8 @@ class ScheduleViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Override functions
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,6 +71,8 @@ class ScheduleViewController: UIViewController {
         ])
     }
     
+    // MARK: - Private create buttons functions
+    
     private func createDoneButton() -> UIButton {
         let button = UIButton(type: .system)
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
@@ -76,7 +88,9 @@ class ScheduleViewController: UIViewController {
         return button
     }
     
-    @objc func switchValueDidChange(_ sender: UISwitch) {
+    // MARK: - @objc private functions
+    
+    @objc private func switchValueDidChange(_ sender: UISwitch) {
         guard let weekday = convertToWeekDay(sender.tag) else { return }
         if sender.isOn {
             addWeekdayToSchedule(weekday)
@@ -86,12 +100,14 @@ class ScheduleViewController: UIViewController {
         }
     }
     
-    @objc func doneButtonTapped() {
+    @objc private func doneButtonTapped() {
         delegate?.reloadData(newSchedule: schedule)
         dismiss(animated: true)
     }
     
-    func convertToWeekDay(_ index: Int) -> WeekDay? {
+    // MARK: - Private functions
+    
+    private func convertToWeekDay(_ index: Int) -> WeekDay? {
         var row = index + 2  // Получаем индекс из tag переключателя
         if row == 8 { row = 1 }
         
@@ -102,19 +118,21 @@ class ScheduleViewController: UIViewController {
         return weekday
     }
     
-    func weekdayInShedule(_ weekday: WeekDay) -> Bool {
+    private func weekdayInShedule(_ weekday: WeekDay) -> Bool {
         schedule.contains(weekday)
     }
     
-    func addWeekdayToSchedule(_ weekday: WeekDay) {
+    private func addWeekdayToSchedule(_ weekday: WeekDay) {
         schedule.insert(weekday)
     }
     
-    func removeWeekdayFromSchedule(_ weekday: WeekDay) {
+    private func removeWeekdayFromSchedule(_ weekday: WeekDay) {
         schedule.remove(weekday)
     }
 
 }
+
+// MARK: - UITableViewDataSource, UITableViewDelegate
 
 extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -144,8 +162,4 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         75
     }
-}
-
-protocol AddHabitViewControllerDelegate: AnyObject {
-    func reloadData(newSchedule: Set<WeekDay>)
 }

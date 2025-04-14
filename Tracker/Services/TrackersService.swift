@@ -7,22 +7,9 @@
 
 import UIKit
 
-protocol TrackersServiceProtocol {
-    func addCategory(_ category: TrackerCategory)
-    func getCategories() -> [TrackerCategory]
-    func addTrackers(tracker: Tracker, for categoryName: String)
-    func getCountСategories() -> Int
-    func getCountTrackers(in categoryIndex: Int) -> Int
-    func getTracker(in categoryIndex: Int, at trackIndex: Int) -> Tracker
-    func getCatergory(index: Int) -> TrackerCategory
-    func addCompletedTracker(tracker: Tracker, date: Date)
-    func deleteCompletedTracker(tracker: Tracker, date: Date)
-    func isTrackerCompleted(tracker: Tracker, date: Date) -> Bool
-    func countTrackerCompletedTrackers(tracker: Tracker) -> Int
-}
-
-
 final class TrackersService: TrackersServiceProtocol {
+    
+    // MARK: - Private properties
     
     private var categories: [TrackerCategory] = [
         TrackerCategory(header: "Домашний уют", trackers: [
@@ -52,6 +39,8 @@ final class TrackersService: TrackersServiceProtocol {
     ]
 
     private var completedTrackers: [TrackerRecord] = []
+    
+    // MARK: - Internal properties
     
     func addCategory(_ category: TrackerCategory) {
         
@@ -106,13 +95,12 @@ final class TrackersService: TrackersServiceProtocol {
     }
     
     func isTrackerCompleted(tracker: Tracker, date: Date) -> Bool {
-        // Проверяем, есть ли запись о выполнении трекера на указанную дату
         return completedTrackers.contains { record in
             record.tracker.name == tracker.name && record.date == date
         }
     }
     
     func countTrackerCompletedTrackers(tracker: Tracker) -> Int {
-        return completedTrackers.count(where: { $0.tracker.name == tracker.name })
+        return completedTrackers.count(where: { $0.tracker.id == tracker.id })
     }
 }

@@ -8,12 +8,17 @@
 import UIKit
 
 class HeaderTrackersView: UICollectionReusableView {
+    
+    // MARK: - Private view properties
+    
     lazy var headerTitle: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 19, weight: .bold)
         label.textColor = .black
         return label
     }()
+    
+    // MARK: - Init
     
     override init(frame: CGRect) {
         super.init(frame: frame)

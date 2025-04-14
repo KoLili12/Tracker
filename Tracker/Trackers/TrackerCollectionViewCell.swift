@@ -9,14 +9,13 @@ import UIKit
 
 class TrackerCollectionViewCell: UICollectionViewCell {
     
-    // private(set) var isSelectedButton = false
-    // private var countDays = 0
+    // MARK: - Internal properties
     
     var indexPath: IndexPath?
     
     var delegate: TrackersViewControllerDelegate?
     
-    // MARK: - Internal properties
+    // MARK: - Private view properties
     
     lazy var cardView: UIImageView = {
         let card = UIImageView()
@@ -138,9 +137,13 @@ class TrackerCollectionViewCell: UICollectionViewCell {
         return button
     }
     
+    // MARK: - @objc private functions
+    
     @objc private func didTapMarkTrackerButton() {
         delegate?.updateDaysCount(cell: self)
     }
+    
+    // MARK: - Internal functions
     
     func changeMarkTrackerButton(isSelectedButton: Bool, countDays: Int) {
         guard let markTrackerButton = markTrackerButton else { return }
