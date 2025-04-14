@@ -254,6 +254,10 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 extension TrackersViewController: TrackersViewControllerDelegate {
     func updateDaysCount(cell: TrackerCollectionViewCell) {
+        guard currentDate < Date() else {
+            print("Нельзя отметить карточку для будущей даты")
+            return
+        }
         guard let indexPath = cell.indexPath else { return }
         let tracker = categories[indexPath.section].trackers[indexPath.row]
         if service.isTrackerCompleted(tracker: tracker, date: currentDate) {
