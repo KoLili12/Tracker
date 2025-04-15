@@ -5,7 +5,7 @@
 //  Created by Николай Жирнов on 29.03.2025.
 //
 
-import Foundation
+import UIKit
 
 struct Tracker {
     let id: UUID = UUID()

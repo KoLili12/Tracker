@@ -16,7 +16,7 @@ final class TrackersViewController: UIViewController {
     private let widthCell = UIScreen.main.bounds.width / 2  - (32 - 9)
     private let heightCell: CGFloat = 148
     
-    private var currentDate = Date()
+    private var currentDate =  Date()
     private let calendar = Calendar.current
     
     // MARK: - Internal functions
@@ -118,7 +118,7 @@ final class TrackersViewController: UIViewController {
             plugLabel.topAnchor.constraint(equalTo: plugImageView.bottomAnchor, constant: 8),
             plugLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
-        
+        currentDate =  datePicker.date
         setDate(date: currentDate)
     }
     

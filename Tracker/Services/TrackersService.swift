@@ -17,7 +17,7 @@ final class TrackersService: TrackersServiceProtocol {
                 name: "Поливать растения",
                 color: UIColor(named: "TrackerGreen") ?? UIColor(),
                 emoji: "❤️",
-                schedule: [.monday, .thursday, .sunday]
+                schedule: [.monday, .thursday, .sunday, .wednesday]
             ),
             Tracker(
                 name: "Кошка заслонила камеру на созвоне",
@@ -96,7 +96,8 @@ final class TrackersService: TrackersServiceProtocol {
     
     func isTrackerCompleted(tracker: Tracker, date: Date) -> Bool {
         return completedTrackers.contains { record in
-            record.tracker.name == tracker.name && record.date == date
+            print(record.date, date)
+            return record.tracker.name == tracker.name && record.date == date
         }
     }
     

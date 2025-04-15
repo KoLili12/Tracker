@@ -23,7 +23,7 @@ class BaseAddTrackerViewController: UIViewController {
     
     // MARK: - UI properties
     
-    private lazy var nameTrackerTextField: UITextField = {
+    lazy var nameTrackerTextField: UITextField = {
         let textField = UITextField()
         textField.delegate = self
         textField.placeholder = "Введите название трекера"
@@ -39,7 +39,7 @@ class BaseAddTrackerViewController: UIViewController {
         return textField
     }()
     
-    private lazy var tableView: UITableView = {
+    lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.separatorStyle = .singleLine
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
@@ -51,7 +51,7 @@ class BaseAddTrackerViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var stackView: UIStackView = {
+    lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [])
         stackView.axis = .horizontal
         stackView.spacing = 8
@@ -59,9 +59,9 @@ class BaseAddTrackerViewController: UIViewController {
         return stackView
     }()
     
-    private lazy var addTrackerButton = createAddTrackerButton()
+    lazy var addTrackerButton = createAddTrackerButton()
     
-    private lazy var cancelButton = createCancelButton()
+    lazy var cancelButton = createCancelButton()
     
     // MARK: - Lifecycle methods
     
@@ -76,14 +76,14 @@ class BaseAddTrackerViewController: UIViewController {
     
     // MARK: - Setup methods
     
-    private func setupNavigationBar() {
+    func setupNavigationBar() {
         navigationItem.title = getNavigationTitle()
         navigationController?.navigationBar.titleTextAttributes = [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
     }
     
-    private func setupViews() {
+    func setupViews() {
         view.addSubview(nameTrackerTextField)
         view.addSubview(tableView)
         view.addSubview(stackView)
@@ -92,7 +92,7 @@ class BaseAddTrackerViewController: UIViewController {
         stackView.addArrangedSubview(addTrackerButton)
     }
     
-    private func setupConstraints() {
+    func setupConstraints() {
         NSLayoutConstraint.activate([
             nameTrackerTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             nameTrackerTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -111,7 +111,7 @@ class BaseAddTrackerViewController: UIViewController {
     
     // MARK: - Button creators
     
-    private func createAddTrackerButton() -> UIButton {
+    func createAddTrackerButton() -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle("Сохранить", for: .normal)
         button.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
@@ -128,7 +128,7 @@ class BaseAddTrackerViewController: UIViewController {
         return button
     }
     
-    private func createCancelButton() -> UIButton {
+    func createCancelButton() -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle("Отмена", for: .normal)
         button.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
