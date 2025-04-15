@@ -15,7 +15,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     
     var delegate: TrackersViewControllerDelegate?
     
-    // MARK: - Private view properties
+    // MARK: - Private UI properties
     
     lazy var cardView: UIImageView = {
         let card = UIImageView()

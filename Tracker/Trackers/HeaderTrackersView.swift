@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HeaderTrackersView: UICollectionReusableView {
+final class HeaderTrackersView: UICollectionReusableView {
     
     // MARK: - Private view properties
     

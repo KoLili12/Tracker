@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ScheduleViewController: UIViewController {
+final class ScheduleViewController: UIViewController {
     
     // MARK: - Private properties
     
@@ -20,7 +20,7 @@ class ScheduleViewController: UIViewController {
     
     // MARK: - Private view properties
     
-    lazy private var tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.isScrollEnabled = false
         tableView.separatorStyle = .singleLine
@@ -118,7 +118,7 @@ class ScheduleViewController: UIViewController {
         return weekday
     }
     
-    private func weekdayInShedule(_ weekday: WeekDay) -> Bool {
+    private func weekdayInSchedule(_ weekday: WeekDay) -> Bool {
         schedule.contains(weekday)
     }
     
@@ -150,7 +150,7 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
             return cell
         }
         
-        switchView.isOn = weekdayInShedule(weekday) // Установите начальное состояние
+        switchView.isOn = weekdayInSchedule(weekday) // Установите начальное состояние
         switchView.onTintColor = UIColor(named: "TrackerBlue")// Цвет активного состояния
         switchView.tag = indexPath.row // Пометка для идентификации при обработке событий
         switchView.addTarget(self, action: #selector(switchValueDidChange(_ :)), for: .valueChanged)

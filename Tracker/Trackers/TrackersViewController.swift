@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TrackersViewController: UIViewController {
+final class TrackersViewController: UIViewController {
     
     // MARK: - Private properties
     
@@ -178,15 +178,9 @@ class TrackersViewController: UIViewController {
         categories = categories.filter { $0.trackers.isEmpty == false }
         print(categories)
         
-        if categories.isEmpty {
-            collectionView.isHidden = true
-            plugImageView.isHidden = false
-            plugLabel.isHidden = false
-        } else {
-            plugImageView.isHidden = true
-            plugLabel.isHidden = true
-            collectionView.isHidden = false
-        }
+        collectionView.isHidden = categories.isEmpty
+        plugImageView.isHidden = !categories.isEmpty
+        plugLabel.isHidden = !categories.isEmpty
         
         collectionView.reloadData()
     }

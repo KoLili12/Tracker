@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ChooseTrackerTypeViewController: UIViewController {
+final class ChooseTrackerTypeViewController: UIViewController {
     
     // MARK: - Internal properties
     

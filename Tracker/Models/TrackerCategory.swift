@@ -5,16 +5,10 @@
 //  Created by Николай Жирнов on 29.03.2025.
 //
 
-import UIKit
+import Foundation
 
 struct TrackerCategory {
-    let id: UUID
+    let id: UUID = UUID()
     let header: String
     let trackers: [Tracker]
-    
-    init(header: String, trackers: [Tracker]) {
-        self.id = UUID()
-        self.header = header
-        self.trackers = trackers
-    }
 }
