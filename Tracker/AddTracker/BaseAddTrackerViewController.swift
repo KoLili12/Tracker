@@ -147,6 +147,7 @@ class BaseAddTrackerViewController: UIViewController {
     lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [])
         stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
         stackView.spacing = 8
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
@@ -233,10 +234,12 @@ class BaseAddTrackerViewController: UIViewController {
             
             // Ограничения для stackView
             stackView.topAnchor.constraint(equalTo: colorCollectionView.bottomAnchor, constant: 24),
+            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 20),
+            stackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -20),
             stackView.centerXAnchor.constraint(equalTo: scrollView.contentLayoutGuide.centerXAnchor),
-            stackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -16),
             
-            // Важно: одинаковая ширина contentLayoutGuide и frameLayoutGuide
+            
             scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
         ])
     }
@@ -252,10 +255,7 @@ class BaseAddTrackerViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            button.heightAnchor.constraint(equalToConstant: 60),
-            button.widthAnchor.constraint(equalToConstant: 161)
-        ])
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.isEnabled = false
         return button
     }
@@ -269,10 +269,7 @@ class BaseAddTrackerViewController: UIViewController {
         button.layer.borderWidth = 1.0
         button.layer.cornerRadius = 16
         button.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            button.heightAnchor.constraint(equalToConstant: 60),
-            button.widthAnchor.constraint(equalToConstant: 161)
-        ])
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
         return button
     }
