@@ -15,6 +15,8 @@ final class CoreDataManager {
         return persistentContainer.viewContext
     }
     
+    // MARK: - Lifecycle methods
+    
     private init() {}
     
     // MARK: - Core Data stack

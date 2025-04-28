@@ -10,15 +10,23 @@ import CoreData
 
 
 final class TrackerCategoryStore: NSObject {
+    
+    // MARK: - Private properties
+    
     private let context: NSManagedObjectContext
     private let trackerStore = TrackerStore()
+    
+    // MARK: - Lifecycle methods
     
     override init() {
         self.context = CoreDataManager.shared.context
     }
     
+    // MARK: - Internal functions
+    
     func createCategory(from category: TrackerCategory) {
         let newCategory = TrackerCategoryCoreData(context: context)
+        newCategory.id = UUID()
         newCategory.header = category.header
         CoreDataManager.shared.saveContext()
     }
@@ -29,37 +37,33 @@ final class TrackerCategoryStore: NSObject {
             let categoriesData = try context.fetch(request)
             var result: [TrackerCategory] = []
             for category in categoriesData {
-                result.append(try map(from: category))
+                result.append(try Transformer.map(from: category))
             }
             return result
-            
         } catch {
             print("Fetching error: \(error)")
             return []
         }
     }
     
-    
-    
-    func map(from categoryCoreData: TrackerCategoryCoreData) throws -> TrackerCategory {
-        guard let name = categoryCoreData.header,
-              let trackersCoreData = categoryCoreData.trackers as? Set<TrackerCoreData> else {
-            throw TrackerCategoryStoreError.decodingErrorInvalidData
-        }
-        
-        var trackers: [Tracker] = []
-        for trackerCoreData in trackersCoreData {
-            if let tracker = try? trackerStore.map(from: trackerCoreData) {
-                trackers.append(tracker)
+    func findCategory(at index: Int) -> TrackerCategory? {
+        let nameCategory = trackerStore.fetchedResultsController.sections?[index]
+        guard let header = nameCategory?.name else { return nil }
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "header == %@", header)
+        do {
+            let categories = try context.fetch(request)
+            if categories.count > 0 {
+                guard let category = categories.first else {return nil}
+                return try Optional(Transformer.map(from: category))
+            } else {
+                return nil
             }
+        } catch {
+            return nil
         }
-        
-        return TrackerCategory(header: name, trackers: trackers)
     }
-    
-    
 }
-
 
 enum TrackerCategoryStoreError: Error {
     case decodingErrorInvalidData

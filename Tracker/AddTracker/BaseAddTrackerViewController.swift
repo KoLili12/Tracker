@@ -11,7 +11,7 @@ class BaseAddTrackerViewController: UIViewController {
     
     // MARK: - Protected properties
     
-    weak var delegate: CreateTrackerDelegate?
+    let store = TrackerStore()
     
     let allEmojis = [
         "😊", // улыбающееся лицо
@@ -58,8 +58,8 @@ class BaseAddTrackerViewController: UIViewController {
     var trackerName: String?
     var trackerCategory: String? = "Важное"
     var trackerSchedule: Set<WeekDay> = []
-    var trackerEmoji: String? = "🎸"
-    var trackerColor: UIColor? = .red
+    var trackerEmoji: String?
+    var trackerColor: UIColor?
     
     let maxTrackerNameLength: Int = 38
     
@@ -191,7 +191,7 @@ class BaseAddTrackerViewController: UIViewController {
     }
     
     func setupConstraints() {
-        let tableViewHeight = CGFloat(getTableData().count * 75) + 32 // Высота ячейки 75 + доп. пространство
+        let tableViewHeight = CGFloat(getTableData().count * 75) + 32
         
         NSLayoutConstraint.activate([
             // Ограничения для scrollView
@@ -220,7 +220,7 @@ class BaseAddTrackerViewController: UIViewController {
             emojiCollectionView.topAnchor.constraint(equalTo: emojiLabel.bottomAnchor, constant: 24),
             emojiCollectionView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 18),
             emojiCollectionView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -18),
-            emojiCollectionView.heightAnchor.constraint(equalToConstant: 156), // Задайте подходящую высоту
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: 156),
             
             // Ограничения для colorLabel
             colorLabel.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 40),
@@ -287,7 +287,8 @@ class BaseAddTrackerViewController: UIViewController {
             emoji: trackerEmoji ?? "",
             schedule: trackerSchedule
         )
-        delegate?.createTracker(tracker: tracker, categoryName: trackerCategory ?? "")
+        guard let trackerCategory else { return }
+        store.addTrackers(tracker: tracker, for: trackerCategory)
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
@@ -367,6 +368,7 @@ extension BaseAddTrackerViewController: UICollectionViewDelegateFlowLayout {
             cell?.selectionView.layer.borderColor = cell?.colorView.backgroundColor?.withAlphaComponent(0.3).cgColor
             trackerColor = allColors[indexPath.row]
         }
+        checkStateButton()
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {

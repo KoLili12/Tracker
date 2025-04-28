@@ -8,25 +8,31 @@
 import Foundation
 import CoreData
 
-
 final class TrackerRecordStore: NSObject {
-    var context: NSManagedObjectContext
-    let trackerStore = TrackerStore()
+    
+    // MARK: - Private properties
+    
+    private var context: NSManagedObjectContext
+    private let trackerStore = TrackerStore()
+    
+    // MARK: - Lifecycle methods
     
     override init() {
         self.context = CoreDataManager.shared.context
     }
     
+    // MARK: - Internal functions
+    
     func addCompletedTracker(tracker: Tracker, date: Date) {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
-        request.predicate = NSPredicate(format: "id == %@", tracker.id as CVarArg)
+        request.predicate = NSPredicate(format: "name == %@", tracker.name)
         
         do {
             let trackers = try context.fetch(request)
             
             // Проверяем, найден ли трекер
             guard let trackerCoreData = trackers.first else {
-                print("Ошибка: трекер с id \(tracker.id) не найден в базе данных")
+                print("Ошибка: трекер с name \(tracker.name) не найден в базе данных")
                 return
             }
             
@@ -46,7 +52,7 @@ final class TrackerRecordStore: NSObject {
     
     func deleteCompletedTracker(tracker: Tracker, date: Date) {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.predicate = NSPredicate(format: "tracker.id == %@ AND date == %@", tracker.id as CVarArg, date as CVarArg)
+        request.predicate = NSPredicate(format: "tracker.name == %@ AND date == %@", tracker.name as CVarArg, date as CVarArg)
         do {
             let records = try context.fetch(request)
             
@@ -64,7 +70,7 @@ final class TrackerRecordStore: NSObject {
     
     func isTrackerCompleted(tracker: Tracker, date: Date) -> Bool {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.predicate = NSPredicate(format: "tracker.id == %@ AND date == %@", tracker.id as CVarArg, date as CVarArg)
+        request.predicate = NSPredicate(format: "tracker.name == %@ AND date == %@", tracker.name as CVarArg, date as CVarArg)
         do {
             let records = try context.fetch(request)
             return !records.isEmpty
@@ -76,7 +82,7 @@ final class TrackerRecordStore: NSObject {
     
     func countTrackerCompletedTrackers(tracker: Tracker) -> Int {
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
-        request.predicate = NSPredicate(format: "tracker.id == %@", tracker.id as CVarArg)
+        request.predicate = NSPredicate(format: "tracker.name == %@", tracker.name as CVarArg)
         do {
             let records = try context.fetch(request)
             return records.count
