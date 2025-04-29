@@ -16,7 +16,7 @@ final class TrackersService: TrackersServiceProtocol {
     private let trackerRecordStore = TrackerRecordStore()
     
     var countCategory: Int {
-        return trackerStore.countSection
+        trackerStore.countSection
     }
     
     weak var delegate: TrackerUpdateDelegate?

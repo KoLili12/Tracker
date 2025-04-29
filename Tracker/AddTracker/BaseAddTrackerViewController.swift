@@ -331,6 +331,17 @@ extension BaseAddTrackerViewController: UITextFieldDelegate {
         checkStateButton()
     }
     
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard let name = textField.text else { return }
+        trackerName = name.isEmpty ? nil : name
+        checkStateButton()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder() // Скрываем клавиатуру
+        return true
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }

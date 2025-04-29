@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TrackerCollectionViewCell: UICollectionViewCell {
+final class TrackerCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Internal properties
     
