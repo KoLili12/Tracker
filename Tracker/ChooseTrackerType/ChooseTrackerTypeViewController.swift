@@ -9,10 +9,6 @@ import UIKit
 
 final class ChooseTrackerTypeViewController: UIViewController {
     
-    // MARK: - Internal properties
-    
-    weak var delegate: CreateTrackerDelegate?
-    
     // MARK: - Private view properties
     
     private lazy var stackView: UIStackView = {
@@ -88,14 +84,12 @@ final class ChooseTrackerTypeViewController: UIViewController {
     
     @objc private func addHabitButtonTapped() {
         let vc = AddHabitViewController()
-        vc.delegate = delegate
         let nc = UINavigationController(rootViewController: vc)
         present(nc, animated: true)
     }
     
     @objc private func addIrregularEventsButtonTapped() {
         let vc = AddIrregularEventViewController()
-        vc.delegate = delegate
         let nc = UINavigationController(rootViewController: vc)
         present(nc, animated: true)
     }

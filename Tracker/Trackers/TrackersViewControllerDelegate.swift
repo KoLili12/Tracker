@@ -9,5 +9,4 @@ import Foundation
 
 protocol TrackersViewControllerDelegate: AnyObject {
     func updateDaysCount(cell: TrackerCollectionViewCell)
-    func countDays(cell: TrackerCollectionViewCell) -> Int
 }

@@ -11,97 +11,81 @@ final class TrackersService: TrackersServiceProtocol {
     
     // MARK: - Private properties
     
-    private var categories: [TrackerCategory] = [
-        TrackerCategory(header: "Домашний уют", trackers: [
-            Tracker(
-                name: "Поливать растения",
-                color: UIColor(named: "TrackerGreen") ?? UIColor(),
-                emoji: "❤️",
-                schedule: [.monday, .thursday, .sunday, .wednesday]
-            ),
-            Tracker(
-                name: "Кошка заслонила камеру на созвоне",
-                color: UIColor(named: "TrackerRed") ?? UIColor(),
-                emoji: "🌺",
-                schedule: [.thursday, .friday]
-            )
-           ]
-        ),
-        TrackerCategory(header: "Радостные мелочи", trackers: [
-            Tracker(
-                name: "Бабушка прислала открытку в вотсапе",
-                color: UIColor(named: "TrackerOrange") ?? UIColor(),
-                emoji: "😻",
-                schedule: [.monday, .thursday, .friday]
-            )
-           ]
-        )
-    ]
-
-    private var completedTrackers: [TrackerRecord] = []
+    private let trackerStore = TrackerStore()
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
+    
+    var countCategory: Int {
+        trackerStore.countSection
+    }
+    
+    weak var delegate: TrackerUpdateDelegate?
+    
+    init() {
+        trackerStore.delegate = self
+    }
     
     // MARK: - Internal properties
     
     func addCategory(_ category: TrackerCategory) {
-        
+    }
+    
+    func findCategory(at index: Int) -> TrackerCategory? {
+        trackerCategoryStore.findCategory(at: index)
+    }
+    
+    func findTracker(at indexPath: IndexPath) -> Tracker? {
+        trackerStore.findTracker(at: indexPath)
+    }
+    
+    func countTrackerInCategory(index: Int) -> Int {
+        trackerStore.countTrackerInCategory(index: index)
     }
     
     func getCategories() -> [TrackerCategory] {
-        return categories
+        trackerCategoryStore.fetchAllCategories()
     }
     
     func addTrackers(tracker: Tracker, for categoryName: String) {
-        var newCategories: [TrackerCategory] = []
-        var flag = false // есть ли новая категория в categories?
-        categories.forEach { category in
-            if category.header == categoryName {
-                let newCategory = TrackerCategory(header: category.header, trackers: category.trackers + [tracker])
-                newCategories.append(newCategory)
-                flag = true
-            } else {
-                newCategories.append(category)
-            }
-        }
-        
-        if !flag {
-            newCategories.append(TrackerCategory(header: categoryName, trackers: [tracker]))
-        }
-        categories = newCategories
+        trackerStore.addTrackers(tracker: tracker, for: categoryName)
     }
     
     func getCountСategories() -> Int {
-        return categories.count
+        trackerCategoryStore.fetchAllCategories().count
     }
     
     func getCountTrackers(in categoryIndex: Int) -> Int {
-        return categories[categoryIndex].trackers.count
-    }
-    
-    func getTracker(in categoryIndex: Int, at trackIndex: Int) -> Tracker {
-        return categories[categoryIndex].trackers[trackIndex]
+        trackerCategoryStore.fetchAllCategories()[categoryIndex].trackers.count
     }
     
     func getCatergory(index: Int) -> TrackerCategory {
-        return categories[index]
+        trackerCategoryStore.fetchAllCategories()[index]
     }
     
     func addCompletedTracker(tracker: Tracker, date: Date) {
-        let trackerRecord = TrackerRecord(tracker: tracker, date: date)
-        completedTrackers.append(trackerRecord)
+        trackerRecordStore.addCompletedTracker(tracker: tracker, date: date)
     }
     
     func deleteCompletedTracker(tracker: Tracker, date: Date) {
-        completedTrackers.removeAll { $0.tracker.name == tracker.name && $0.date == date }
+        trackerRecordStore.deleteCompletedTracker(tracker: tracker, date: date)
     }
     
     func isTrackerCompleted(tracker: Tracker, date: Date) -> Bool {
-        return completedTrackers.contains { record in
-            print(record.date, date)
-            return record.tracker.name == tracker.name && record.date == date
-        }
+        trackerRecordStore.isTrackerCompleted(tracker: tracker, date: date)
     }
     
     func countTrackerCompletedTrackers(tracker: Tracker) -> Int {
-        return completedTrackers.count(where: { $0.tracker.id == tracker.id })
+        trackerRecordStore.countTrackerCompletedTrackers(tracker: tracker)
+    }
+    
+    func filterTrackers(for date: Date) {
+        trackerStore.filterTrackers(for: date)
     }
 }
+
+extension TrackersService: TrackerStoreDelegate {
+    func store(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
+        delegate?.updateCollection(store, didUpdate: update)
+    }
+}
+

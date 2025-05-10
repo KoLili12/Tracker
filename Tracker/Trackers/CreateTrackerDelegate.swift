@@ -8,5 +8,6 @@
 import Foundation
 
 protocol CreateTrackerDelegate: AnyObject {
+    var service: TrackersServiceProtocol { get set }
     func createTracker(tracker: Tracker, categoryName: String)
 }
