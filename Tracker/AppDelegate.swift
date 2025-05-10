@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         var window: UIWindow?
         window = UIWindow()
-        window?.rootViewController = TabBarViewController()
+        window?.rootViewController = OnboardingViewController()
         window?.makeKeyAndVisible()
         return true
     }
