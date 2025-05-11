@@ -9,4 +9,5 @@ import Foundation
 
 protocol TrackerUpdateDelegate: AnyObject {
     func updateCollection(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate)
+    func updateFullCollection()
 }

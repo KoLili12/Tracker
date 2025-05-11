@@ -25,11 +25,22 @@ final class AddIrregularEventViewController: BaseAddTrackerViewController {
         return ["Категория"]
     }
     
+    override func configureCellDetails(_ cell: UITableViewCell, at indexPath: IndexPath) {
+        cell.detailTextLabel?.text = trackerCategory
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        cell.detailTextLabel?.textColor = UIColor(named: "TrackerGray")
+    }
+    
     // MARK: - UITableViewDelegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
             // TODO: - Добавить переход на экран выбора категории
+            let vc = CategoriesViewController()
+            vc.viewModel = CategoriesViewModel()
+            vc.viewModel?.delegate = self
+            let nc = UINavigationController(rootViewController: vc)
+            present(nc, animated: true)
         }
     }
 }

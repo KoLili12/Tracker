@@ -126,7 +126,6 @@ final class TrackersViewController: UIViewController {
             plugLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         setDate(date: currentDate)
-        collectionView.reloadData()
     }
     
     // MARK: - Private create buttons functions
@@ -162,7 +161,7 @@ final class TrackersViewController: UIViewController {
         let selectedDate = calendar.startOfDay(for: sender.date)
         currentDate = selectedDate
         setDate(date: selectedDate)
-        collectionView.reloadData()
+        // collectionView.reloadData()
     }
     
     // MARK: - Private functions
@@ -262,15 +261,20 @@ extension TrackersViewController: TrackersViewControllerDelegate {
 
 // MARK: - CreateTrackerDelegate
 
-extension TrackersViewController: CreateTrackerDelegate {
-    func createTracker(tracker: Tracker, categoryName: String) {
-        service.addTrackers(tracker: tracker, for: categoryName)
-        setDate(date: currentDate)
-        collectionView.reloadData()
-    }
-}
+//extension TrackersViewController: CreateTrackerDelegate {
+//    func createTracker(tracker: Tracker, categoryName: String) {
+//        service.addTrackers(tracker: tracker, for: categoryName)
+//        // setDate(date: currentDate)
+//    }
+//}
+
+// MARK: - TrackerUpdateDelegate
 
 extension TrackersViewController: TrackerUpdateDelegate {
+    func updateFullCollection() {
+        collectionView.reloadData()
+    }
+    
     func updateCollection(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
         setDate(date: currentDate)
         collectionView.performBatchUpdates {
@@ -278,6 +282,8 @@ extension TrackersViewController: TrackerUpdateDelegate {
             collectionView.insertSections(update.insertedSections)
             collectionView.deleteItems(at: update.deletedIndexes)
             collectionView.insertItems(at: update.insertedIndexes)
+            
+            collectionView.reloadItems(at: update.updatedIndexes)
         }
     }
 }

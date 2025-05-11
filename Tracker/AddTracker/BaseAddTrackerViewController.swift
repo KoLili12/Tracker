@@ -56,7 +56,12 @@ class BaseAddTrackerViewController: UIViewController {
         ]
     
     var trackerName: String?
-    var trackerCategory: String? = "Важное"
+    var trackerCategory: String? {
+        didSet {
+            checkStateButton()
+            tableView.reloadData()
+        }
+    }
     var trackerSchedule: Set<WeekDay> = []
     var trackerEmoji: String?
     var trackerColor: UIColor?
@@ -316,7 +321,6 @@ class BaseAddTrackerViewController: UIViewController {
     
     // Override in subclasses to configure cell details
     func configureCellDetails(_ cell: UITableViewCell, at indexPath: IndexPath) {
-        cell.detailTextLabel?.text = "Важное"
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.detailTextLabel?.textColor = UIColor(named: "TrackerGray")
     }

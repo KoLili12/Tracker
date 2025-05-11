@@ -22,6 +22,7 @@ final class TrackerStore: NSObject {
     private var deletedIndexes: [IndexPath] = []
     private var insertedSections: IndexSet = []
     private var deletedSections: IndexSet = []
+    private var updatedIndexes: [IndexPath] = []
     
     // MARK: - Internal properties
 
@@ -113,36 +114,23 @@ final class TrackerStore: NSObject {
         return trackers
     }
     
-    // Добавим метод для обновления предиката и перезагрузки данных по выбранному дню недели
     func filterTrackers(for date: Date) {
-        // Получаем номер дня недели из даты
         let calendar = Calendar.current
         guard let weekday = WeekDay(rawValue: calendar.component(.weekday, from: date)) else {
             return
         }
         
-        let fetchRequest = TrackerCoreData.fetchRequest()
-        
-        // Создаем предикат для фильтрации по дню недели
-        // Используем CONTAINS для проверки, содержит ли строка schedule номер дня недели
         let weekdayString = String(weekday.rawValue)
         let predicate = NSPredicate(format: "schedule CONTAINS %@", weekdayString)
-        fetchRequest.predicate = predicate
         
-        fetchRequest.sortDescriptors = [
-            NSSortDescriptor(key: "createdAt", ascending: false)
-        ]
+        fetchedResultsController.fetchRequest.predicate = predicate
         
-        fetchedResultsController = NSFetchedResultsController(
-            fetchRequest: fetchRequest,
-            managedObjectContext: context,
-            sectionNameKeyPath: "category.header",
-            cacheName: nil
-        )
-        
-        fetchedResultsController.delegate = self
-        
-        try? fetchedResultsController.performFetch()
+        do {
+            try fetchedResultsController.performFetch()
+            delegate?.updateFullCollection()
+        } catch {
+            print("Ошибка при фильтрации трекеров: \(error)")
+        }
     }
 }
 
@@ -152,6 +140,7 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         insertedIndexes = []
         deletedIndexes = []
+        updatedIndexes = []
         insertedSections = []
         deletedSections = []
     }
@@ -162,12 +151,14 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
             didUpdate: TrackerStoreUpdate(
                 insertedIndexes: insertedIndexes,
                 deletedIndexes: deletedIndexes,
+                updatedIndexes: updatedIndexes,
                 insertedSections: insertedSections,
                 deletedSections: deletedSections
             )
         )
         insertedIndexes = []
         deletedIndexes = []
+        updatedIndexes = []
         insertedSections = []
         deletedSections = []
     }
@@ -186,10 +177,16 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         case .delete:
             guard let indexPath = indexPath else { fatalError() }
             deletedIndexes.append(indexPath)
-        case .update, .move:
-            print()
+        case .update:
+            guard let indexPath = indexPath else { fatalError() }
+                updatedIndexes.append(indexPath)
+        case .move:
+            guard let oldIndexPath = indexPath,
+                  let newIndexPath = newIndexPath else { return }
+            deletedIndexes.append(oldIndexPath)
+            insertedIndexes.append(newIndexPath)
         default:
-            fatalError()
+            break
         }
     }
     

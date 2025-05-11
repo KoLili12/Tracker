@@ -87,5 +87,9 @@ extension TrackersService: TrackerStoreDelegate {
     func store(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
         delegate?.updateCollection(store, didUpdate: update)
     }
+    
+    func updateFullCollection() {
+        delegate?.updateFullCollection()
+    }
 }
 

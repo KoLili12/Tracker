@@ -10,6 +10,7 @@ import Foundation
 struct TrackerStoreUpdate {
     let insertedIndexes: [IndexPath]
     let deletedIndexes: [IndexPath]
+    let updatedIndexes: [IndexPath]  // Новое свойство
     let insertedSections: IndexSet
     let deletedSections: IndexSet
 }

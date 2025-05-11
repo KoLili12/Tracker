@@ -12,4 +12,6 @@ protocol TrackerStoreDelegate: AnyObject {
         _ store: TrackerStore,
         didUpdate update: TrackerStoreUpdate
     )
+    
+    func updateFullCollection()
 }
