@@ -10,9 +10,13 @@ import UIKit
 
 final class AddCategoryViewController: UIViewController {
     
-    weak var viewModel: CategoriesViewModel?
+    // MARK: - Private properties
     
     private var nameCategory: String?
+    
+    // MARK: - Internal properties
+    
+    weak var viewModel: CategoriesViewModel?
     
     lazy var nameCategoryTextField: UITextField = {
         let textField = UITextField()
@@ -31,6 +35,8 @@ final class AddCategoryViewController: UIViewController {
     }()
     
     lazy var doneButton: UIButton = createDoneButton()
+    
+    // MARK: - Lifecycle methods
     
     override func viewDidLoad() {
         super .viewDidLoad()
@@ -57,6 +63,8 @@ final class AddCategoryViewController: UIViewController {
         checkStateButton()
     }
     
+    // MARK: - Internal functions
+    
     func checkStateButton() {
         if nameCategory != nil  {
             doneButton.backgroundColor = UIColor(named: "TrackerBlack")
@@ -67,9 +75,11 @@ final class AddCategoryViewController: UIViewController {
         }
     }
     
+    // MARK: - Button creators
+    
     func createDoneButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle("Готово", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: "TrackerBlack")
@@ -82,6 +92,8 @@ final class AddCategoryViewController: UIViewController {
         return button
     }
     
+    // MARK: - Button actions
+    
     @objc func didTapDoneButton() {
         guard let nameCategory else {
             print("Ошибка ввода")
@@ -91,6 +103,8 @@ final class AddCategoryViewController: UIViewController {
         dismiss(animated: true)
     }
 }
+
+// MARK: - UITextFieldDelegate
 
 extension AddCategoryViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {

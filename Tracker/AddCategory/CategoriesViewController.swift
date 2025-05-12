@@ -45,6 +45,8 @@ final class CategoriesViewController: UIViewController {
         return label
     }()
     
+    // MARK: - Lifecycle methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -92,6 +94,17 @@ final class CategoriesViewController: UIViewController {
         }
     }
     
+    // MARK: - Internal functions
+    
+    func checkStatys() {
+        let flag = viewModel?.fetchAllCategories().count == 0
+        tableView.isHidden = flag
+        plugImageView.isHidden = !flag
+        plugLabel.isHidden = !flag
+    }
+    
+    // MARK: - Button creators
+    
     func createAddCategoryButton() -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle("Добавить категорию", for: .normal)
@@ -107,21 +120,17 @@ final class CategoriesViewController: UIViewController {
         return button
     }
     
+    // MARK: - Button actions
+    
     @objc func didTapAddCategoryButton() {
         let vc = AddCategoryViewController()
         vc.viewModel = viewModel
         let nc = UINavigationController(rootViewController: vc)
         present(nc, animated: true)
     }
-    
-    func checkStatys() {
-        let flag = viewModel?.fetchAllCategories().count == 0
-        tableView.isHidden = flag
-        plugImageView.isHidden = !flag
-        plugLabel.isHidden = !flag
-    }
-    
 }
+
+// MARK: - UITableViewDataSource, UITableViewDelegate
 
 extension CategoriesViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

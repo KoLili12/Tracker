@@ -27,8 +27,8 @@ final class TrackersService: TrackersServiceProtocol {
     
     // MARK: - Internal properties
     
-    func addCategory(_ category: TrackerCategory) {
-    }
+//    func addCategory(_ category: TrackerCategory) {
+//    }
     
     func findCategory(at index: Int) -> TrackerCategory? {
         trackerCategoryStore.findCategory(at: index)
@@ -51,7 +51,7 @@ final class TrackersService: TrackersServiceProtocol {
     }
     
     func getCountСategories() -> Int {
-        trackerCategoryStore.fetchAllCategories().count
+        trackerStore.countSection
     }
     
     func getCountTrackers(in categoryIndex: Int) -> Int {

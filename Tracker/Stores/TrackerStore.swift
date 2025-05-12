@@ -20,9 +20,10 @@ final class TrackerStore: NSObject {
     
     private var insertedIndexes: [IndexPath] = []
     private var deletedIndexes: [IndexPath] = []
+    private var updatedIndexes: [IndexPath] = []
     private var insertedSections: IndexSet = []
     private var deletedSections: IndexSet = []
-    private var updatedIndexes: [IndexPath] = []
+    private var updatedSections: IndexSet = []
     
     // MARK: - Internal properties
 
@@ -30,6 +31,7 @@ final class TrackerStore: NSObject {
         let fetchRequest = TrackerCoreData.fetchRequest()
         
         fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "category.header", ascending: false),
             NSSortDescriptor(key: "createdAt", ascending: false)
         ]
         
@@ -132,6 +134,7 @@ final class TrackerStore: NSObject {
             print("Ошибка при фильтрации трекеров: \(error)")
         }
     }
+
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
@@ -143,6 +146,7 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         updatedIndexes = []
         insertedSections = []
         deletedSections = []
+        updatedSections = []
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
@@ -153,7 +157,8 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
                 deletedIndexes: deletedIndexes,
                 updatedIndexes: updatedIndexes,
                 insertedSections: insertedSections,
-                deletedSections: deletedSections
+                deletedSections: deletedSections,
+                updatedSections: updatedSections
             )
         )
         insertedIndexes = []
@@ -161,6 +166,7 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         updatedIndexes = []
         insertedSections = []
         deletedSections = []
+        updatedSections = []
     }
     
     func controller(
@@ -200,7 +206,10 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
                 insertedSections.insert(sectionIndex)
             case .delete:
                 deletedSections.insert(sectionIndex)
+            case .update:
+                updatedSections.insert(sectionIndex)
             default:
+                print("Необработанный тип изменения секции: \(type)")
                 fatalError()
             }
         }
