@@ -13,7 +13,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         var window: UIWindow?
         window = UIWindow()
-        window?.rootViewController = OnboardingViewController()
+        // Проверяем, был ли уже показан стартовый экран
+        if OnboardingManager.shared.wasOnboardingShown {
+            let mainVC = TabBarViewController()
+            window?.rootViewController = mainVC
+        } else {
+            let onboardingVC = OnboardingViewController()
+            window?.rootViewController = onboardingVC
+        }
         window?.makeKeyAndVisible()
         return true
     }

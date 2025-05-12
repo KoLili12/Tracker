@@ -81,6 +81,7 @@ class OnboardingViewController: UIPageViewController {
     }
     
     @objc private func didTaptransitionButton() {
+        OnboardingManager.shared.setOnboardingShown()
         let vc = TabBarViewController()
         guard let window = UIApplication.shared.windows.first else {
             assertionFailure("Invalid window configuration")
