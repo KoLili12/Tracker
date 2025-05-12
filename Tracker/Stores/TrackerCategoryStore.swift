@@ -81,8 +81,8 @@ final class TrackerCategoryStore: NSObject {
     }
     
     func findCategory(at index: Int) -> TrackerCategory? {
-        let nameCategory = trackerStore.fetchedResultsController.sections?[index]
-        guard let header = nameCategory?.name else { return nil }
+        let nameCategory = fetchedResultsController.fetchedObjects?[index]
+        guard let header = nameCategory?.header else { return nil }
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.predicate = NSPredicate(format: "header == %@", header)
         do {
