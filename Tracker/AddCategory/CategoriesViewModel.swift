@@ -21,7 +21,7 @@ final class CategoriesViewModel {
         }
     }
     
-    let store = TrackerCategoryStore()
+    private let store = TrackerCategoryStore()
     
     init() {
         store.delegate = self
@@ -37,7 +37,7 @@ final class CategoriesViewModel {
 }
 
 extension CategoriesViewModel: TrackerCategoryStoreDelegate {
-    func updateCategoies() {
+    func updateCategories() {
         allCategories = fetchAllCategories()
     }
 }

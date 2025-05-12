@@ -17,7 +17,7 @@ protocol TrackersServiceProtocol {
     func addTrackers(tracker: Tracker, for categoryName: String)
     func getCountСategories() -> Int
     func getCountTrackers(in categoryIndex: Int) -> Int
-    func getCatergory(index: Int) -> TrackerCategory
+    func getCategory(index: Int) -> TrackerCategory
     func addCompletedTracker(tracker: Tracker, date: Date)
     func deleteCompletedTracker(tracker: Tracker, date: Date)
     func isTrackerCompleted(tracker: Tracker, date: Date) -> Bool

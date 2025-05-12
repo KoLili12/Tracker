@@ -4,9 +4,9 @@
 //
 //  Created by Николай Жирнов on 12.05.2025.
 //
-import UIKit
+import Foundation
 
-class OnboardingManager {
+final class OnboardingManager {
     static let shared = OnboardingManager()
     
     // Ключ для хранения в UserDefaults

@@ -18,7 +18,7 @@ final class AddCategoryViewController: UIViewController {
     
     weak var viewModel: CategoriesViewModel?
     
-    lazy var nameCategoryTextField: UITextField = {
+    private lazy var nameCategoryTextField: UITextField = {
         let textField = UITextField()
         textField.delegate = self
         textField.placeholder = "Введите название категории"
@@ -29,12 +29,12 @@ final class AddCategoryViewController: UIViewController {
         textField.leftView = paddingView
         textField.leftViewMode = .always
         textField.clearButtonMode = .whileEditing
-        textField.textColor = UIColor(named: "TrackerBlack")
+        textField.textColor = UIColor(resource: .trackerBlack)
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
-    lazy var doneButton: UIButton = createDoneButton()
+    private lazy var doneButton: UIButton = createDoneButton()
     
     // MARK: - Lifecycle methods
     
@@ -43,7 +43,7 @@ final class AddCategoryViewController: UIViewController {
         view.backgroundColor = .white
         
         navigationItem.title = "Новая категория"
-        self.navigationController?.navigationBar.titleTextAttributes = [
+        navigationController?.navigationBar.titleTextAttributes = [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
         
@@ -65,7 +65,7 @@ final class AddCategoryViewController: UIViewController {
     
     // MARK: - Internal functions
     
-    func checkStateButton() {
+    private func checkStateButton() {
         if nameCategory != nil  {
             doneButton.backgroundColor = UIColor(named: "TrackerBlack")
             doneButton.isEnabled = true
@@ -77,7 +77,7 @@ final class AddCategoryViewController: UIViewController {
     
     // MARK: - Button creators
     
-    func createDoneButton() -> UIButton {
+    private func createDoneButton() -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle("Готово", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -94,7 +94,7 @@ final class AddCategoryViewController: UIViewController {
     
     // MARK: - Button actions
     
-    @objc func didTapDoneButton() {
+    @objc private func didTapDoneButton() {
         guard let nameCategory else {
             print("Ошибка ввода")
             return

@@ -7,9 +7,9 @@
 
 import UIKit
 
-class OnboardingViewController: UIPageViewController {
+final class OnboardingViewController: UIPageViewController {
     
-    lazy var pages: [UIViewController] = {
+    private lazy var pages: [UIViewController] = {
         let firstPage = PageViewController()
         firstPage.imageView.image = UIImage(resource: .blueImageOnboarding)
         firstPage.label.text = "Отслеживайте только то, что хотите"
@@ -21,7 +21,7 @@ class OnboardingViewController: UIPageViewController {
         return [firstPage, secondPage]
     }()
     
-    lazy var pageControl: UIPageControl = {
+    private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
@@ -33,7 +33,7 @@ class OnboardingViewController: UIPageViewController {
         return pageControl
     }()
     
-    lazy var transitionButton = createTransitionButton()
+    private lazy var transitionButton = createTransitionButton()
     
     init() {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)

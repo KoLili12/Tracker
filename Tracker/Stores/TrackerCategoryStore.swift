@@ -46,21 +46,6 @@ final class TrackerCategoryStore: NSObject {
     
     // MARK: - Internal functions
     
-//    func fetchAllCategories() -> [TrackerCategory] {
-//        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
-//        do {
-//            let categoriesData = try context.fetch(request)
-//            var result: [TrackerCategory] = []
-//            for category in categoriesData {
-//                result.append(try Transformer.map(from: category))
-//            }
-//            return result
-//        } catch {
-//            print("Fetching error: \(error)")
-//            return []
-//        }
-//    }
-    
     func fetchAllCategories() -> [TrackerCategory] {
         let categoriesCoreData = fetchedResultsController.fetchedObjects ?? []
         var categories: [TrackerCategory] = []
@@ -101,7 +86,7 @@ final class TrackerCategoryStore: NSObject {
 
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        delegate?.updateCategoies()
+        delegate?.updateCategories()
     }
 }
 
@@ -111,5 +96,5 @@ enum TrackerCategoryStoreError: Error {
 }
 
 protocol TrackerCategoryStoreDelegate: AnyObject {
-    func updateCategoies()
+    func updateCategories()
 }

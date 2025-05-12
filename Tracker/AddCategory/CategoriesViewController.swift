@@ -11,7 +11,7 @@ final class CategoriesViewController: UIViewController {
     
     var viewModel: CategoriesViewModel?
     
-    lazy var addCategoryButton = createAddCategoryButton()
+    private lazy var addCategoryButton = createAddCategoryButton()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
@@ -24,7 +24,7 @@ final class CategoriesViewController: UIViewController {
     }()
     
     private lazy var plugImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "StarRingImage"))
+        let imageView = UIImageView(image: UIImage(resource: .starRing))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -85,18 +85,18 @@ final class CategoriesViewController: UIViewController {
             addCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
         
-        checkStatys()
+        checkStatus()
         
         viewModel?.allCategoriesBinding = { [weak self] _ in
             guard let self = self else { return }
-            checkStatys()
+            checkStatus()
             self.tableView.reloadData()
         }
     }
     
     // MARK: - Internal functions
     
-    func checkStatys() {
+    private func checkStatus() {
         let flag = viewModel?.fetchAllCategories().count == 0
         tableView.isHidden = flag
         plugImageView.isHidden = !flag
@@ -105,7 +105,7 @@ final class CategoriesViewController: UIViewController {
     
     // MARK: - Button creators
     
-    func createAddCategoryButton() -> UIButton {
+    private func createAddCategoryButton() -> UIButton {
         let button = UIButton(type: .system)
         button.setTitle("Добавить категорию", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -122,7 +122,7 @@ final class CategoriesViewController: UIViewController {
     
     // MARK: - Button actions
     
-    @objc func didTapAddCategoryButton() {
+    @objc private func didTapAddCategoryButton() {
         let vc = AddCategoryViewController()
         vc.viewModel = viewModel
         let nc = UINavigationController(rootViewController: vc)

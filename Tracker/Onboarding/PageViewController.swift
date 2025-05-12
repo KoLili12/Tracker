@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PageViewController: UIViewController {
+final class PageViewController: UIViewController {
     
     let imageView: UIImageView = {
         let imageView = UIImageView()
