@@ -33,6 +33,11 @@ final class AddHabitViewController: BaseAddTrackerViewController {
             present(nc, animated: true)
         } else { // Категория
             // TODO: - Добавить переход на экран выбора категории
+            let vc = CategoriesViewController()
+            vc.viewModel = CategoriesViewModel()
+            vc.viewModel?.delegate = self
+            let nc = UINavigationController(rootViewController: vc)
+            present(nc, animated: true)
         }
     }
     

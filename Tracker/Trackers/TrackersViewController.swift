@@ -172,7 +172,10 @@ final class TrackersViewController: UIViewController {
         
         // вызываем фильтрацию в хранилище
         service.filterTrackers(for: date)
-        
+        checkStatusPlugViews()
+    }
+    
+    private func checkStatusPlugViews() {
         let hasTrackers = service.countCategory > 0
         collectionView.isHidden = !hasTrackers
         plugImageView.isHidden = hasTrackers
@@ -193,6 +196,9 @@ extension TrackersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TrackerCell", for: indexPath) as? TrackerCollectionViewCell else { return UICollectionViewCell() }
         guard let tracker = service.findTracker(at: indexPath) else { return UICollectionViewCell() }
+        
+        cell.prepareForReuse()
+        
         cell.delegate = self
         cell.emojiLabel.text = tracker.emoji
         cell.descriptionLabel.text = tracker.name
@@ -211,6 +217,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         guard service.countCategory > 0 else { return UICollectionReusableView() }
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HeaderTrackersView", for: indexPath) as? HeaderTrackersView
         guard let category = service.findCategory(at: indexPath.section) else { return UICollectionReusableView() }
+        view?.prepareForReuse()
         view?.headerTitle.text = category.header
         
         return view ?? UICollectionReusableView()
@@ -260,24 +267,25 @@ extension TrackersViewController: TrackersViewControllerDelegate {
     }
 }
 
-// MARK: - CreateTrackerDelegate
-
-extension TrackersViewController: CreateTrackerDelegate {
-    func createTracker(tracker: Tracker, categoryName: String) {
-        service.addTrackers(tracker: tracker, for: categoryName)
-        setDate(date: currentDate)
-        collectionView.reloadData()
-    }
-}
+// MARK: - TrackerUpdateDelegate
 
 extension TrackersViewController: TrackerUpdateDelegate {
+    func updateFullCollection() {
+        collectionView.reloadData()
+    }
+    
     func updateCollection(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
-        setDate(date: currentDate)
+        checkStatusPlugViews()
         collectionView.performBatchUpdates {
             collectionView.deleteSections(update.deletedSections)
-            collectionView.insertSections(update.insertedSections)
             collectionView.deleteItems(at: update.deletedIndexes)
+            collectionView.insertSections(update.insertedSections)
             collectionView.insertItems(at: update.insertedIndexes)
+            
+            collectionView.reloadSections(update.updatedSections)
+            collectionView.reloadItems(at: update.updatedIndexes)
         }
     }
+    
+    
 }

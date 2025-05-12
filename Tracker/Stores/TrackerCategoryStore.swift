@@ -16,6 +16,28 @@ final class TrackerCategoryStore: NSObject {
     private let context: NSManagedObjectContext
     private let trackerStore = TrackerStore()
     
+    weak var delegate: TrackerCategoryStoreDelegate?
+    
+    lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
+        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
+        
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "header", ascending: false)
+        ]
+        
+        let fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        
+        fetchedResultsController.delegate = self
+        
+        try? fetchedResultsController.performFetch()
+        return fetchedResultsController
+    }()
+    
     // MARK: - Lifecycle methods
     
     override init() {
@@ -24,31 +46,28 @@ final class TrackerCategoryStore: NSObject {
     
     // MARK: - Internal functions
     
-    func createCategory(from category: TrackerCategory) {
+    func fetchAllCategories() -> [TrackerCategory] {
+        let categoriesCoreData = fetchedResultsController.fetchedObjects ?? []
+        var categories: [TrackerCategory] = []
+        
+        for categoryCoreData in categoriesCoreData {
+            if let category = try? Transformer.map(from: categoryCoreData) {
+                categories.append(category)
+            }
+        }
+        return categories
+    }
+    
+    func addCategory(with name: String) {
         let newCategory = TrackerCategoryCoreData(context: context)
         newCategory.id = UUID()
-        newCategory.header = category.header
+        newCategory.header = name
         CoreDataManager.shared.saveContext()
     }
     
-    func fetchAllCategories() -> [TrackerCategory] {
-        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
-        do {
-            let categoriesData = try context.fetch(request)
-            var result: [TrackerCategory] = []
-            for category in categoriesData {
-                result.append(try Transformer.map(from: category))
-            }
-            return result
-        } catch {
-            print("Fetching error: \(error)")
-            return []
-        }
-    }
-    
     func findCategory(at index: Int) -> TrackerCategory? {
-        let nameCategory = trackerStore.fetchedResultsController.sections?[index]
-        guard let header = nameCategory?.name else { return nil }
+        let nameCategory = fetchedResultsController.fetchedObjects?[index]
+        guard let header = nameCategory?.header else { return nil }
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.predicate = NSPredicate(format: "header == %@", header)
         do {
@@ -65,7 +84,17 @@ final class TrackerCategoryStore: NSObject {
     }
 }
 
+extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        delegate?.updateCategories()
+    }
+}
+
 enum TrackerCategoryStoreError: Error {
     case decodingErrorInvalidData
     case failedToAddTracker
+}
+
+protocol TrackerCategoryStoreDelegate: AnyObject {
+    func updateCategories()
 }
