@@ -11,7 +11,15 @@ final class ScheduleViewController: UIViewController {
     
     // MARK: - Private properties
     
-    private let scheduleUI: [String] = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    private let scheduleUI: [String] = [
+        NSLocalizedString("monday", comment: "Monday"),
+        NSLocalizedString("tuesday", comment: "Tuesday"),
+        NSLocalizedString("wednesday", comment: "Wednesday"),
+        NSLocalizedString("thursday", comment: "Thursday"),
+        NSLocalizedString("friday", comment: "Friday"),
+        NSLocalizedString("saturday", comment: "Saturday"),
+        NSLocalizedString("sunday", comment: "Sunday")
+    ]
     private var schedule: Set<WeekDay>
     
     // MARK: - Internal properties
@@ -47,7 +55,7 @@ final class ScheduleViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "TrackerWhite")
         
-        navigationItem.title = "Расписание"
+        navigationItem.title = NSLocalizedString("schedule", comment: "schedule")
         self.navigationController?.navigationBar.titleTextAttributes = [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
@@ -76,7 +84,7 @@ final class ScheduleViewController: UIViewController {
     private func createDoneButton() -> UIButton {
         let button = UIButton(type: .system)
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(NSLocalizedString("done", comment: "done"), for: .normal)
         button.backgroundColor = UIColor(named: "TrackerBlack")
         button.layer.cornerRadius = 16
         button.setTitleColor(UIColor(named: "TrackerWhite"), for: .normal)

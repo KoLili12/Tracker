@@ -1,0 +1,56 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Николай Жирнов on 14.05.2025.
+  
+*/
+
+"tabBarTrackers" = "Трекеры";
+"tabBarStatistics" = "Статистика";
+"trackers" = "Трекеры";
+"noTrackers" = "Что будем отслеживать?";
+"search" = "Поиск";
+
+"createTracker" = "Создание трекера";
+"addHabit" = "Добавить привычку";
+"irregularEvent" = "Нерегулярные событие";
+
+"newHabit" = "Новая привычка";
+"newIrregularEvent" = "Новое нерегулярное событие";
+"enterTrackerName" = "Введите название трекера";
+"category" = "Категория";
+"schedule" = "Расписание";
+"color" = "Цвет";
+"cancel" = "Отменить";
+"create" = "Создать";
+
+"schedule" = "Расписание";
+"everyday" = "Каждый день";
+"monday" = "Понедельник";
+"tuesday" = "Вторник";
+"wednesday" = "Среда";
+"thursday" = "Четверг";
+"friday" = "Пятница";
+"saturday" = "Суббота";
+"sunday" = "Воскресенье";
+"mon" = "Пн";
+"tue" = "Вт";
+"wed" = "Ср";
+"thu" = "Чт";
+"fri" = "Пт";
+"sat" = "Сб";
+"sun" = "Вс";
+"everyday" = "Каждый день";
+"done" = "Готово";
+
+"category" = "Категория";
+"newCategory" = "Новая категория";
+"enterCategoryName" = "Введите название категории";
+"done" = "Готово";
+"addCategory" = "Добавить категорию";
+"categoriesHint" = "Привычки и события можно объединить по смыслу";
+
+"onboardingPage1" = "Отслеживайте только то, что хотите";
+"onboardingPage2" = "Даже если это не литры воды и йога";
+"onboardingButtonText" = "Вот это технологии!";

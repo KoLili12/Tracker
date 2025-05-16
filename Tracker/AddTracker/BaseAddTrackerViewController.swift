@@ -83,7 +83,7 @@ class BaseAddTrackerViewController: UIViewController {
     lazy var nameTrackerTextField: UITextField = {
         let textField = UITextField()
         textField.delegate = self
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = NSLocalizedString("enterTrackerName", comment: "enterTrackerName")
         textField.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
         textField.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         textField.layer.cornerRadius = 16
@@ -107,7 +107,7 @@ class BaseAddTrackerViewController: UIViewController {
     
     lazy var colorLabel: UILabel = {
         let label = UILabel()
-        label.text = "Цвет"
+        label.text = NSLocalizedString("color", comment: "color")
         label.font = UIFont.systemFont(ofSize: 19, weight: .bold)
         label.textColor = UIColor(named: "TrackerBlack")
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -253,7 +253,7 @@ class BaseAddTrackerViewController: UIViewController {
     
     func createAddTrackerButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Сохранить", for: .normal)
+        button.setTitle(NSLocalizedString("create", comment: "create"), for: .normal)
         button.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         button.setTitleColor(UIColor(named: "TrackerWhite"), for: .normal)
         button.backgroundColor = UIColor(named: "TrackerGray")
@@ -267,7 +267,7 @@ class BaseAddTrackerViewController: UIViewController {
     
     func createCancelButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Отмена", for: .normal)
+        button.setTitle(NSLocalizedString("cancel", comment: "cancel"), for: .normal)
         button.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         button.setTitleColor(UIColor(named: "RedForCancelButton"), for: .normal)
         button.layer.borderColor = UIColor(named: "RedForCancelButton")?.cgColor

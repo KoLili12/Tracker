@@ -41,7 +41,7 @@ final class TrackersViewController: UIViewController {
     
     private lazy var trackerLabel: UILabel = {
         let label = UILabel()
-        label.text = "Трекеры"
+        label.text = NSLocalizedString("trackers", comment: "trackers")
         label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -50,7 +50,7 @@ final class TrackersViewController: UIViewController {
     private lazy var searchTrackers: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.backgroundImage = UIImage()
-        searchBar.placeholder = "Поиск"
+        searchBar.placeholder = NSLocalizedString("search", comment: "search")
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
@@ -58,7 +58,7 @@ final class TrackersViewController: UIViewController {
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.locale = Locale.current
         datePicker.preferredDatePickerStyle = .compact
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         return datePicker
@@ -79,7 +79,7 @@ final class TrackersViewController: UIViewController {
     
     private lazy var plugLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("noTrackers", comment: "search")
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -100,7 +100,7 @@ final class TrackersViewController: UIViewController {
         service.delegate = self
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: createPlusButon())
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: createPlusButton())
         
         view.addSubview(trackerLabel)
         view.addSubview(searchTrackers)
@@ -131,7 +131,7 @@ final class TrackersViewController: UIViewController {
     
     // MARK: - Private create buttons functions
     
-    private func createPlusButon() -> UIButton {
+    private func createPlusButton() -> UIButton {
         
         let button = UIButton.systemButton(
             with: UIImage(named: "TrackerPlus") ?? UIImage(),

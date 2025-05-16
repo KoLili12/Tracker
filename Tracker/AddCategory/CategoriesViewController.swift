@@ -38,7 +38,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var plugLabel: UILabel = {
         let label = UILabel()
-        label.text = "Привычки и события можно объединить по смыслу"
+        label.text = NSLocalizedString("categoriesHint", comment: "Habits and events can be grouped by meaning")
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .gray
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -50,7 +50,7 @@ final class CategoriesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "Категория"
+        navigationItem.title = NSLocalizedString("category", comment: "Category")
         self.navigationController?.navigationBar.titleTextAttributes = [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
@@ -107,7 +107,7 @@ final class CategoriesViewController: UIViewController {
     
     private func createAddCategoryButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(NSLocalizedString("addCategory", comment: "Add category"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: "TrackerBlack")

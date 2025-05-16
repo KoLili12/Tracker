@@ -11,12 +11,15 @@ final class AddHabitViewController: BaseAddTrackerViewController {
     
     // MARK: - Private properties
     
-    private let tableViewData: [String] = ["Категория", "Расписание"]
+    private let tableViewData: [String] = [
+        NSLocalizedString("category", comment: "category"),
+        NSLocalizedString("schedule", comment: "schedule")
+    ]
     
     // MARK: - Methods overridden from BaseAddTrackerViewController
     
     override func getNavigationTitle() -> String {
-        return "Новая привычка"
+        return NSLocalizedString("newHabit", comment: "newHabit")
     }
     
     override func getTableData() -> [String] {
@@ -57,16 +60,16 @@ final class AddHabitViewController: BaseAddTrackerViewController {
     
     private func createScheduleText() -> String {
         if trackerSchedule.count == 7 {
-            return "Каждый день"
+            return  NSLocalizedString("everyday", comment: "everyday")
         }
         let dayNames: [WeekDay: String] = [
-            .monday: "Пн",
-            .tuesday: "Вт",
-            .wednesday: "Ср",
-            .thursday: "Чт",
-            .friday: "Пт",
-            .saturday: "Сб",
-            .sunday: "Вс"
+            .monday: NSLocalizedString("mon", comment: "mon"),
+            .tuesday: NSLocalizedString("tue", comment: "tue"),
+            .wednesday: NSLocalizedString("wed", comment: "wed"),
+            .thursday: NSLocalizedString("thu", comment: "thu"),
+            .friday: NSLocalizedString("fri", comment: "fri"),
+            .saturday: NSLocalizedString("sat", comment: "sat"),
+            .sunday: NSLocalizedString("sun", comment: "sun")
         ]
         let sortedDays = trackerSchedule.sorted { $0.rawValue < $1.rawValue }
         let dayStrings = sortedDays.compactMap { dayNames[$0] }

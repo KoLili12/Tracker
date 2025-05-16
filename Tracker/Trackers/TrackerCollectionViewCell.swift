@@ -167,7 +167,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             markTrackerButton.alpha = 1
             markTrackerButton.setImage(UIImage(), for: .normal)
         }
-        countDaysLabel.text = "\(countDays) дней"
+        countDaysLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("numberOfDays", comment: "Number of days format"),
+            countDays
+        )
     }
 }
 

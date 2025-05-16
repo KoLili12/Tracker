@@ -21,7 +21,7 @@ final class AddCategoryViewController: UIViewController {
     private lazy var nameCategoryTextField: UITextField = {
         let textField = UITextField()
         textField.delegate = self
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = NSLocalizedString("enterCategoryName", comment: "Enter category name")
         textField.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
         textField.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         textField.layer.cornerRadius = 16
@@ -42,7 +42,7 @@ final class AddCategoryViewController: UIViewController {
         super .viewDidLoad()
         view.backgroundColor = .white
         
-        navigationItem.title = "Новая категория"
+        navigationItem.title = NSLocalizedString("newCategory", comment: "New Category")
         navigationController?.navigationBar.titleTextAttributes = [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
@@ -79,7 +79,7 @@ final class AddCategoryViewController: UIViewController {
     
     private func createDoneButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(NSLocalizedString("done", comment: "Done"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: "TrackerBlack")
