@@ -84,7 +84,11 @@ class BaseAddTrackerViewController: UIViewController {
         let textField = UITextField()
         textField.delegate = self
         textField.placeholder = NSLocalizedString("enterTrackerName", comment: "enterTrackerName")
-        textField.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        if traitCollection.userInterfaceStyle == .light {
+            textField.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        } else {
+            textField.backgroundColor = .darkTextField
+        }
         textField.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         textField.layer.cornerRadius = 16
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
@@ -173,6 +177,19 @@ class BaseAddTrackerViewController: UIViewController {
         setupConstraints()
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        tableView.reloadData()
+        checkStateButton()
+        if traitCollection.userInterfaceStyle == .light {
+            nameTrackerTextField.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        } else {
+            nameTrackerTextField.backgroundColor = .darkTextField
+        }
+    }
+    
     // MARK: - Setup methods
     
     func setupNavigationBar() {
@@ -196,7 +213,7 @@ class BaseAddTrackerViewController: UIViewController {
     }
     
     func setupConstraints() {
-        let tableViewHeight = CGFloat(getTableData().count * 75) + 32
+        let tableViewHeight = CGFloat(getTableData().count * 75) + 35
         
         NSLayoutConstraint.activate([
             // Ограничения для scrollView
@@ -255,7 +272,7 @@ class BaseAddTrackerViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle(NSLocalizedString("create", comment: "create"), for: .normal)
         button.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
-        button.setTitleColor(UIColor(named: "TrackerWhite"), for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: "TrackerGray")
         button.layer.cornerRadius = 16
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -302,9 +319,15 @@ class BaseAddTrackerViewController: UIViewController {
     func checkStateButton() {
         if trackerName != nil && trackerCategory != nil && trackerSchedule.count > 0 && trackerEmoji != nil && trackerColor != nil {
             addTrackerButton.backgroundColor = UIColor(named: "TrackerBlack")
+            if traitCollection.userInterfaceStyle == .dark {
+                addTrackerButton.setTitleColor(.black, for: .normal)
+            } else {
+                addTrackerButton.setTitleColor(.white, for: .normal)
+            }
             addTrackerButton.isEnabled = true
         } else {
             addTrackerButton.backgroundColor = UIColor(named: "TrackerGray")
+            addTrackerButton.setTitleColor(.white, for: .normal)
             addTrackerButton.isEnabled = false
         }
     }
@@ -439,7 +462,11 @@ extension BaseAddTrackerViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-        cell.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        if  traitCollection.userInterfaceStyle == .light {
+            cell.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        } else {
+            cell.backgroundColor = .darkTextField
+        }
         cell.accessoryType = .disclosureIndicator
         cell.selectionStyle = .none
         

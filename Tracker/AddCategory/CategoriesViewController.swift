@@ -94,6 +94,13 @@ final class CategoriesViewController: UIViewController {
         }
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        tableView.reloadData()
+    }
+    
     // MARK: - Internal functions
     
     private func checkStatus() {
@@ -109,7 +116,7 @@ final class CategoriesViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle(NSLocalizedString("addCategory", comment: "Add category"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.trackerWhite, for: .normal)
         button.backgroundColor = UIColor(named: "TrackerBlack")
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(didTapAddCategoryButton), for: .touchUpInside)
@@ -139,7 +146,11 @@ extension CategoriesViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        if  traitCollection.userInterfaceStyle == .light {
+            cell.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        } else {
+            cell.backgroundColor = .darkTextField
+        }
         cell.selectionStyle = .none
         
         let header = viewModel?.fetchAllCategories()[indexPath.row].header

@@ -34,8 +34,10 @@ final class TrackersViewController: UIViewController {
         
         collection.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: "TrackerCell")
         collection.register(HeaderTrackersView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderTrackersView")
-        
+
         collection.translatesAutoresizingMaskIntoConstraints = false
+            
+        collection.backgroundColor = .trackerWhite
         return collection
     }()
     
@@ -81,7 +83,7 @@ final class TrackersViewController: UIViewController {
         let label = UILabel()
         label.text = NSLocalizedString("noTrackers", comment: "search")
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .gray
+        label.textColor = UIColor(resource: .trackerBlack) // .gray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -127,6 +129,12 @@ final class TrackersViewController: UIViewController {
         ])
         setDate(date: currentDate)
         collectionView.reloadData()
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
     }
     
     // MARK: - Private create buttons functions

@@ -66,7 +66,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.text = "0 дней"
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .black
+        label.textColor = .trackerBlack
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -125,7 +125,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         let button = UIButton(type: .custom)
         button.addTarget(self, action: #selector(didTapMarkTrackerButton), for: .touchUpInside)
         button.setTitle("+", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.trackerWhite, for: .normal)
         button.backgroundColor = .red
         button.layer.cornerRadius = 17
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)

@@ -24,7 +24,7 @@ final class ChooseTrackerTypeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor(resource: .trackerWhite)
         
         let addHabitButton = createAddHabitButton()
         let addIrregularEventsButton = createAddIrregularEventButton()
@@ -54,7 +54,7 @@ final class ChooseTrackerTypeViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle(NSLocalizedString("addHabit", comment: "addHabit"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(resource: .trackerWhite), for: .normal)
         button.backgroundColor = UIColor(named: "TrackerBlack")
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(addHabitButtonTapped), for: .touchUpInside)
@@ -69,7 +69,7 @@ final class ChooseTrackerTypeViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle(NSLocalizedString("irregularEvent", comment: "irregularEvent"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(UIColor(resource: .trackerWhite), for: .normal)
         button.backgroundColor = UIColor(named: "TrackerBlack")
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(addIrregularEventsButtonTapped), for: .touchUpInside)

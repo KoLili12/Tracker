@@ -22,7 +22,11 @@ final class AddCategoryViewController: UIViewController {
         let textField = UITextField()
         textField.delegate = self
         textField.placeholder = NSLocalizedString("enterCategoryName", comment: "Enter category name")
-        textField.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        if traitCollection.userInterfaceStyle == .light {
+            textField.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        } else {
+            textField.backgroundColor = .darkTextField
+        }
         textField.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         textField.layer.cornerRadius = 16
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
@@ -40,7 +44,7 @@ final class AddCategoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super .viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .trackerWhite
         
         navigationItem.title = NSLocalizedString("newCategory", comment: "New Category")
         navigationController?.navigationBar.titleTextAttributes = [
@@ -63,14 +67,28 @@ final class AddCategoryViewController: UIViewController {
         checkStateButton()
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        checkStateButton()
+        if traitCollection.userInterfaceStyle == .light {
+            nameCategoryTextField.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        } else {
+            nameCategoryTextField.backgroundColor = .darkTextField
+        }
+    }
+    
     // MARK: - Internal functions
     
     private func checkStateButton() {
         if nameCategory != nil  {
             doneButton.backgroundColor = UIColor(named: "TrackerBlack")
+            doneButton.setTitleColor(.trackerWhite, for: .normal)
             doneButton.isEnabled = true
         } else {
             doneButton.backgroundColor = UIColor(named: "TrackerGray")
+            doneButton.setTitleColor(.white, for: .normal)
             doneButton.isEnabled = false
         }
     }
@@ -81,7 +99,7 @@ final class AddCategoryViewController: UIViewController {
         let button = UIButton(type: .system)
         button.setTitle(NSLocalizedString("done", comment: "Done"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.trackerWhite, for: .normal)
         button.backgroundColor = UIColor(named: "TrackerBlack")
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)

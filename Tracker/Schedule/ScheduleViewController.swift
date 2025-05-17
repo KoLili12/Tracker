@@ -79,6 +79,13 @@ final class ScheduleViewController: UIViewController {
         ])
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        tableView.reloadData()
+    }
+    
     // MARK: - Private create buttons functions
     
     private func createDoneButton() -> UIButton {
@@ -149,7 +156,11 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-        cell.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        if  traitCollection.userInterfaceStyle == .light {
+            cell.backgroundColor = UIColor(red: 247/255, green: 248/255, blue: 250/255, alpha: 1.0)
+        } else {
+            cell.backgroundColor = .darkTextField
+        }
         cell.selectionStyle = .none
         let switchView = UISwitch()
         

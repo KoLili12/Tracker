@@ -13,7 +13,11 @@ final class TabBarViewController: UITabBarController {
     
     private lazy var TabBarSeparator: UIView = {
         let lineView = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
-        lineView.backgroundColor = UIColor(named: "TrackerGray")
+        if traitCollection.userInterfaceStyle == .light {
+            lineView.backgroundColor = UIColor(named: "TrackerGray")
+        } else {
+            lineView.backgroundColor = .black
+        }
         lineView.translatesAutoresizingMaskIntoConstraints = false
         return lineView
     }()
@@ -54,4 +58,16 @@ final class TabBarViewController: UITabBarController {
             TabBarSeparator.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        if traitCollection.userInterfaceStyle == .light {
+            TabBarSeparator.backgroundColor = UIColor(named: "TrackerGray")
+        } else {
+            TabBarSeparator.backgroundColor = .black
+        }
+    }
+    
 }
