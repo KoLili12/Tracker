@@ -75,8 +75,8 @@ final class TrackersService: TrackersServiceProtocol {
         trackerRecordStore.countTrackerCompletedTrackers(tracker: tracker)
     }
     
-    func filterTrackers(for date: Date) {
-        trackerStore.filterTrackers(for: date)
+    func filterTrackers(for date: Date?, searchText: String?, category: String?, completed: Bool?) {
+        trackerStore.filterTrackers(for: date, searchText: searchText, category: category, completed: completed)
     }
 }
 

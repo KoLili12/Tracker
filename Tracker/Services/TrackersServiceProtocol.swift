@@ -22,5 +22,5 @@ protocol TrackersServiceProtocol {
     func deleteCompletedTracker(tracker: Tracker, date: Date)
     func isTrackerCompleted(tracker: Tracker, date: Date) -> Bool
     func countTrackerCompletedTrackers(tracker: Tracker) -> Int
-    func filterTrackers(for date: Date)
+    func filterTrackers(for date: Date?, searchText: String?, category: String?, completed: Bool?)
 }

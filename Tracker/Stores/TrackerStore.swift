@@ -116,16 +116,46 @@ final class TrackerStore: NSObject {
         return trackers
     }
     
-    func filterTrackers(for date: Date) {
-        let calendar = Calendar.current
-        guard let weekday = WeekDay(rawValue: calendar.component(.weekday, from: date)) else {
-            return
+    func filterTrackers(for date: Date? = nil, searchText: String? = nil, category: String? = nil, completed: Bool? = nil) {
+        
+        var predicates: [NSPredicate] = []
+        
+        if let date = date {
+            let calendar = Calendar.current
+            guard let weekday = WeekDay(rawValue: calendar.component(.weekday, from: date)) else {
+                return
+            }
+            
+            let weekdayString = String(weekday.rawValue)
+            predicates.append(NSPredicate(format: "schedule CONTAINS %@", weekdayString))
+        }
+        if let searchText, !searchText.isEmpty {
+            predicates.append(NSPredicate(format: "name CONTAINS[cd] %@", searchText))
+        }
+        if let category = category {
+            predicates.append(NSPredicate(format: "category.header == %@", category))
+        }
+        if let completed = completed, let date = date {
+            let calendar = Calendar.current
+            let startOfDay = calendar.startOfDay(for: date)
+            let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+            
+            if completed {
+                // Показать только выполненные трекеры на эту дату
+                predicates.append(NSPredicate(format: "ANY records.date >= %@ AND ANY records.date < %@",
+                                            startOfDay as NSDate, endOfDay as NSDate))
+            } else {
+                // Показать только НЕвыполненные трекеры на эту дату
+                predicates.append(NSPredicate(format: "SUBQUERY(records, $record, $record.date >= %@ AND $record.date < %@).@count == 0",
+                                            startOfDay as NSDate, endOfDay as NSDate))
+            }
         }
         
-        let weekdayString = String(weekday.rawValue)
-        let predicate = NSPredicate(format: "schedule CONTAINS %@", weekdayString)
-        
-        fetchedResultsController.fetchRequest.predicate = predicate
+        if predicates.isEmpty {
+            fetchedResultsController.fetchRequest.predicate = nil
+        } else {
+            fetchedResultsController.fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        }
         
         do {
             try fetchedResultsController.performFetch()

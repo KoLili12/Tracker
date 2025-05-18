@@ -49,12 +49,12 @@ final class TrackersViewController: UIViewController {
         return label
     }()
     
-    private lazy var searchTrackers: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.backgroundImage = UIImage()
-        searchBar.placeholder = NSLocalizedString("search", comment: "search")
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-        return searchBar
+    private lazy var searchTrackers: UISearchTextField = {
+        let searchField = UISearchTextField()
+        searchField.addTarget(self, action: #selector(searchDidChange), for: .editingChanged)
+        searchField.placeholder = NSLocalizedString("search", comment: "search")
+        searchField.translatesAutoresizingMaskIntoConstraints = false
+        return searchField
     }()
     
     private lazy var datePicker: UIDatePicker = {
@@ -113,9 +113,10 @@ final class TrackersViewController: UIViewController {
         NSLayoutConstraint.activate([
             trackerLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             trackerLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            searchTrackers.topAnchor.constraint(equalTo: trackerLabel.bottomAnchor),
-            searchTrackers.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            searchTrackers.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
+            searchTrackers.topAnchor.constraint(equalTo: trackerLabel.bottomAnchor, constant: 10),
+            searchTrackers.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchTrackers.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            searchTrackers.heightAnchor.constraint(equalToConstant: 36),
             collectionView.topAnchor.constraint(equalTo: searchTrackers.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -173,13 +174,28 @@ final class TrackersViewController: UIViewController {
         collectionView.reloadData()
     }
     
+    @objc private func searchDidChange(_ searchField: UISearchTextField) {
+        service.filterTrackers(
+            for: currentDate,
+            searchText: searchField.text ?? "",
+            category: nil,
+            completed: nil
+        )
+    }
+    
     // MARK: - Private functions
     
     private func setDate(date: Date) {
         currentDate = date
         
         // вызываем фильтрацию в хранилище
-        service.filterTrackers(for: date)
+        // service.filterTrackers(for: date)
+        service.filterTrackers(
+            for: date,
+            searchText: nil,
+            category: nil,
+            completed: nil
+        )
         checkStatusPlugViews()
     }
     
@@ -197,6 +213,7 @@ extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         service.countCategory
     }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         service.countTrackerInCategory(index: section)
     }
@@ -221,6 +238,7 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         return cell
     }
+    
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard service.countCategory > 0 else { return UICollectionReusableView() }
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HeaderTrackersView", for: indexPath) as? HeaderTrackersView
@@ -294,6 +312,4 @@ extension TrackersViewController: TrackerUpdateDelegate {
             collectionView.reloadItems(at: update.updatedIndexes)
         }
     }
-    
-    
 }
