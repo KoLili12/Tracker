@@ -27,6 +27,8 @@ final class TrackersViewController: UIViewController {
     
     var categories: [TrackerCategory] = []
     
+    var isCompleted: Bool?
+    
     // MARK: - Private view properties
     
     private lazy var collectionView: UICollectionView = {
@@ -38,6 +40,23 @@ final class TrackersViewController: UIViewController {
         collection.translatesAutoresizingMaskIntoConstraints = false
             
         collection.backgroundColor = .trackerWhite
+        
+        collection.alwaysBounceVertical = true
+        
+        // Вычисляем размер отступа снизу (равен высоте кнопки фильтра + отступ)
+        let filterButtonHeight: CGFloat = 50
+        let safeAreaBottom = view.safeAreaInsets.bottom
+        let bottomInset = filterButtonHeight + 8
+        
+        collection.contentInset = UIEdgeInsets(
+            top: 0,
+            left: 0,
+            bottom: bottomInset,
+            right: 0
+        )
+        
+        // Обновляем отступы для индикатора прокрутки, чтобы он тоже не перекрывался кнопкой
+        collection.scrollIndicatorInsets = collection.contentInset
         return collection
     }()
     
@@ -88,6 +107,8 @@ final class TrackersViewController: UIViewController {
         return label
     }()
     
+    private lazy var filterButton = createFilterButton()
+    
     // MARK: - Override functions
     
     override func viewDidLoad() {
@@ -109,6 +130,7 @@ final class TrackersViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(plugImageView)
         view.addSubview(plugLabel)
+        collectionView.addSubview(filterButton)
         
         NSLayoutConstraint.activate([
             trackerLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -126,7 +148,10 @@ final class TrackersViewController: UIViewController {
             plugImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
             plugLabel.topAnchor.constraint(equalTo: plugImageView.bottomAnchor, constant: 8),
-            plugLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            plugLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
         setDate(date: currentDate)
         collectionView.reloadData()
@@ -145,7 +170,7 @@ final class TrackersViewController: UIViewController {
         let button = UIButton.systemButton(
             with: UIImage(named: "TrackerPlus") ?? UIImage(),
             target: self,
-            action: #selector(self.didTabPlusButton)
+            action: #selector(self.didTapPlusButton)
         )
         
         button.tintColor = UIColor(named: "TrackerBlack")
@@ -159,9 +184,24 @@ final class TrackersViewController: UIViewController {
         return button
     }
     
+    private func createFilterButton() -> UIButton {
+        let button = UIButton()
+        button.addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
+        button.setTitle(NSLocalizedString("filters", comment: "filters"), for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 16
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.widthAnchor.constraint(equalToConstant: 114),
+            button.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        return button
+    }
+    
     // MARK: - @objc private functions
     
-    @objc private func didTabPlusButton() {
+    @objc private func didTapPlusButton() {
         let vc = ChooseTrackerTypeViewController()
         let nc = UINavigationController(rootViewController: vc)
         present(nc, animated: true)
@@ -179,8 +219,15 @@ final class TrackersViewController: UIViewController {
             for: currentDate,
             searchText: searchField.text ?? "",
             category: nil,
-            completed: nil
+            completed: isCompleted
         )
+    }
+    
+    @objc private func didTapFilterButton() {
+        let vc = FiltersViewController()
+        vc.delegate = self
+        let nc = UINavigationController(rootViewController: vc)
+        present(nc, animated: true)
     }
     
     // MARK: - Private functions
@@ -188,14 +235,16 @@ final class TrackersViewController: UIViewController {
     private func setDate(date: Date) {
         currentDate = date
         
-        // вызываем фильтрацию в хранилище
-        // service.filterTrackers(for: date)
         service.filterTrackers(
             for: date,
             searchText: nil,
             category: nil,
-            completed: nil
+            completed: isCompleted
         )
+        // Если фильтр был "Трекеры на сегодня", то сбрасываем
+        if FilterStorage.shared.getSelectedFilter() == TrackerFilter.today.rawValue {
+            FilterStorage.shared.resetSelectedFilter()
+        }
         checkStatusPlugViews()
     }
     
@@ -311,5 +360,28 @@ extension TrackersViewController: TrackerUpdateDelegate {
             collectionView.reloadSections(update.updatedSections)
             collectionView.reloadItems(at: update.updatedIndexes)
         }
+    }
+}
+
+// MARK: - FiltertsViewControllerDelegate
+
+extension TrackersViewController: FiltersViewControllerDelegate {
+    func filtersTrackersDidChange(filter: TrackerFilter?) {
+        switch filter {
+        case .all:
+            isCompleted = nil
+        case .completed:
+            isCompleted = true
+        case .today:
+            isCompleted = nil
+            currentDate = Calendar.current.startOfDay(for: Date())
+            datePicker.date = currentDate
+            datePicker.sendActions(for: .valueChanged)
+        case .notCompleted:
+            isCompleted = false
+        default:
+            print("filtersTrackersDidChange(filter: TrackerFilter?): Ошибка фильтра")
+        }
+        service.filterTrackers(for: currentDate, searchText: nil, category: nil, completed: isCompleted)
     }
 }

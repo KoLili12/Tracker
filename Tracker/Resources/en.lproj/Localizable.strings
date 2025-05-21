@@ -11,6 +11,7 @@
 "trackers" = "Trackers";
 "noTrackers" = "What are we going to track?";
 "search" = "Search";
+"filters" = "Filters";
 
 "createTracker" = "Create tracker";
 "addHabit" = "Add habit";

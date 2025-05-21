@@ -145,7 +145,7 @@ final class TrackerStore: NSObject {
                 predicates.append(NSPredicate(format: "ANY records.date >= %@ AND ANY records.date < %@",
                                             startOfDay as NSDate, endOfDay as NSDate))
             } else {
-                // Показать только НЕвыполненные трекеры на эту дату
+                // Показать только не выполненные трекеры на эту дату
                 predicates.append(NSPredicate(format: "SUBQUERY(records, $record, $record.date >= %@ AND $record.date < %@).@count == 0",
                                             startOfDay as NSDate, endOfDay as NSDate))
             }
