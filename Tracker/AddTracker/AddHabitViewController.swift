@@ -19,7 +19,7 @@ final class AddHabitViewController: BaseAddTrackerViewController {
     // MARK: - Methods overridden from BaseAddTrackerViewController
     
     override func getNavigationTitle() -> String {
-        return NSLocalizedString("newHabit", comment: "newHabit")
+        return isEditMode ? NSLocalizedString("editHabit", comment: "editHabit") :NSLocalizedString("newHabit", comment: "newHabit")
     }
     
     override func getTableData() -> [String] {

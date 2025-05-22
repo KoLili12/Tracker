@@ -15,6 +15,8 @@ protocol TrackersServiceProtocol {
     func countTrackerInCategory(index: Int) -> Int
     func getCategories() -> [TrackerCategory]
     func addTrackers(tracker: Tracker, for categoryName: String)
+    func deleteTracker(index: IndexPath)
+    func pinUnpinTracker(id: UUID)
     func getCountСategories() -> Int
     func getCountTrackers(in categoryIndex: Int) -> Int
     func getCategory(index: Int) -> TrackerCategory

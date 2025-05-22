@@ -12,7 +12,7 @@ final class TrackersService: TrackersServiceProtocol {
     // MARK: - Private properties
     
     private let trackerStore = TrackerStore()
-    private let trackerCategoryStore = TrackerCategoryStore()
+    private lazy var trackerCategoryStore = TrackerCategoryStore(trackerStore: trackerStore)
     private let trackerRecordStore = TrackerRecordStore()
     
     var countCategory: Int {
@@ -45,6 +45,14 @@ final class TrackersService: TrackersServiceProtocol {
     
     func addTrackers(tracker: Tracker, for categoryName: String) {
         trackerStore.addTrackers(tracker: tracker, for: categoryName)
+    }
+    
+    func deleteTracker(index: IndexPath) {
+        trackerStore.deleteTracker(index: index)
+    }
+    
+    func pinUnpinTracker(id: UUID) {
+        trackerStore.pinUnpinTracker(id: id)
     }
     
     func getCountСategories() -> Int {

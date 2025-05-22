@@ -71,6 +71,16 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    lazy var pinLabel: UIImageView = {
+        let view = UIImageView(image: .pin)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            view.widthAnchor.constraint(equalToConstant: 8),
+            view.heightAnchor.constraint(equalToConstant: 12)
+        ])
+        return view
+    }()
+    
     var markTrackerButton: UIButton?
     
     // MARK: - Init
@@ -87,6 +97,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         cardView.addSubview(descriptionLabel)
         cardView.addSubview(circleBackgroundEmojiLabel)
+        cardView.addSubview(pinLabel)
         
         circleBackgroundEmojiLabel.addSubview(emojiLabel)
         
@@ -101,6 +112,9 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             descriptionLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -15),
             descriptionLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 13),
             descriptionLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -13),
+            
+            pinLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 18),
+            pinLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12)
             ])
         
         NSLayoutConstraint.activate([
@@ -171,6 +185,14 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             NSLocalizedString("numberOfDays", comment: "Number of days format"),
             countDays
         )
+    }
+    
+    func checkPinLabel(isPinned: Bool) {
+        if isPinned {
+            pinLabel.isHidden = false
+        } else {
+            pinLabel.isHidden = true
+        }
     }
 }
 

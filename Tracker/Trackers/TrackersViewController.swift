@@ -280,6 +280,8 @@ extension TrackersViewController: UICollectionViewDataSource {
         cell.markTrackerButton?.backgroundColor = tracker.color
         cell.indexPath = indexPath
         
+        cell.checkPinLabel(isPinned: tracker.isPinned)
+        
         let isSelected = service.isTrackerCompleted(tracker: tracker, date: currentDate)
         let count = service.countTrackerCompletedTrackers(tracker: tracker)
         
@@ -293,8 +295,11 @@ extension TrackersViewController: UICollectionViewDataSource {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "HeaderTrackersView", for: indexPath) as? HeaderTrackersView
         guard let category = service.findCategory(at: indexPath.section) else { return UICollectionReusableView() }
         view?.prepareForReuse()
-        view?.headerTitle.text = category.header
-        
+        if category.header == "pinned" {
+            view?.headerTitle.text = "Закрепленные"
+        } else {
+            view?.headerTitle.text = category.header
+        }
         return view ?? UICollectionReusableView()
     }
 }
@@ -318,6 +323,57 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 46)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(actionProvider: { [weak self] actions in
+            
+            let tracker = self?.service.findTracker(at: indexPath)
+            let category = self?.service.findCategory(at: indexPath.section)
+            
+            return UIMenu(children: [
+                UIAction(title: (tracker?.isPinned ?? false) ? NSLocalizedString("unpin", comment: "unpin") : NSLocalizedString("pin", comment: "pin")) { [weak self] _ in
+                    guard let tracker else { return }
+                    self?.service.pinUnpinTracker(id: tracker.id)
+                },
+                UIAction(title: NSLocalizedString("edit", comment: "edit")) { [weak self] _ in
+                    
+                    let viewController: BaseAddTrackerViewController
+                    
+                    if tracker?.schedule.count == 7 {
+                        let vc = AddIrregularEventViewController()
+                        viewController = vc
+                    } else {
+                        let vc = AddHabitViewController()
+                        viewController = vc
+                    }
+                    
+                    guard let tracker else { return }
+                    guard let category else { return }
+                    
+                    viewController.trackerID = tracker.id
+                    viewController.trackerName = tracker.name
+                    viewController.trackerCategory = category.header
+                    viewController.trackerSchedule = tracker.schedule
+                    viewController.trackerEmoji = tracker.emoji
+                    viewController.trackerColor = tracker.color
+                    
+                    viewController.nameTrackerTextField.text = tracker.name
+                    
+                    // Устанавливаем режим редактирования и количество дней
+                    viewController.isEditMode = true
+                    viewController.daysCount = self?.service.countTrackerCompletedTrackers(tracker: tracker) ?? 0
+                    
+                    viewController.addTrackerButton.setTitle("Сохранить", for: .normal)
+                    
+                    let navigationController = UINavigationController(rootViewController: viewController)
+                    self?.present(navigationController, animated: true)
+                },
+                UIAction(title: NSLocalizedString("delete", comment: "delete"), attributes: .destructive) { [weak self] _ in
+                    self?.service.deleteTracker(index: indexPath)
+                },
+            ])
+        })
     }
 }
 
@@ -351,15 +407,16 @@ extension TrackersViewController: TrackerUpdateDelegate {
     
     func updateCollection(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
         checkStatusPlugViews()
-        collectionView.performBatchUpdates {
-            collectionView.deleteSections(update.deletedSections)
-            collectionView.deleteItems(at: update.deletedIndexes)
-            collectionView.insertSections(update.insertedSections)
-            collectionView.insertItems(at: update.insertedIndexes)
-            
-            collectionView.reloadSections(update.updatedSections)
-            collectionView.reloadItems(at: update.updatedIndexes)
-        }
+//        collectionView.performBatchUpdates {
+//            collectionView.deleteSections(update.deletedSections)
+//            collectionView.deleteItems(at: update.deletedIndexes)
+//            collectionView.insertSections(update.insertedSections)
+//            collectionView.insertItems(at: update.insertedIndexes)
+//            
+//            collectionView.reloadSections(update.updatedSections)
+//            collectionView.reloadItems(at: update.updatedIndexes)
+//        }
+        collectionView.reloadData()
     }
 }
 

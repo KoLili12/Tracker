@@ -12,6 +12,11 @@
 "noTrackers" = "What are we going to track?";
 "search" = "Search";
 "filters" = "Filters";
+"delete" = "Delete";
+"edit" = "Edit";
+"pin" = "Pin";
+"unpin" = "Unpin";
+"pinned" = "Pinned";
 
 "createTracker" = "Create tracker";
 "addHabit" = "Add habit";
@@ -19,6 +24,8 @@
 
 "newHabit" = "New habit";
 "newIrregularEvent" = "New irregular event";
+"editHabit" = "Edit habit";
+"editIrregularEvent" = "Edit irregular event";
 "enterTrackerName" = "Enter tracker name";
 "category" = "Category";
 "schedule" = "Schedule";

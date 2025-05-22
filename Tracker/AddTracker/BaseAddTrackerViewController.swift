@@ -55,6 +55,7 @@ class BaseAddTrackerViewController: UIViewController {
         UIColor(resource: ColorResource(name: "TrackerLightGreen", bundle: .main)),
         ]
     
+    var trackerID: UUID?
     var trackerName: String?
     var trackerCategory: String? {
         didSet {
@@ -66,6 +67,10 @@ class BaseAddTrackerViewController: UIViewController {
     var trackerEmoji: String?
     var trackerColor: UIColor?
     
+    // Для экрана редактирования
+    var daysCount: Int = 0
+    var isEditMode: Bool = false
+    
     let maxTrackerNameLength: Int = 38
     
     // MARK: - UI properties
@@ -73,9 +78,9 @@ class BaseAddTrackerViewController: UIViewController {
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = UIColor(named: "TrackerWhite")
-        scrollView.showsVerticalScrollIndicator = true // Показывать индикатор прокрутки
-        scrollView.alwaysBounceVertical = true // Дать возможность "отпружинивать" при прокрутке
-        scrollView.contentInsetAdjustmentBehavior = .always // Автоматически настраивать отступы
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.alwaysBounceVertical = true
+        scrollView.contentInsetAdjustmentBehavior = .always
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
@@ -114,6 +119,15 @@ class BaseAddTrackerViewController: UIViewController {
         label.text = NSLocalizedString("color", comment: "color")
         label.font = UIFont.systemFont(ofSize: 19, weight: .bold)
         label.textColor = UIColor(named: "TrackerBlack")
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    lazy var daysCountLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.textColor = UIColor(named: "TrackerBlack")
+        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -210,59 +224,78 @@ class BaseAddTrackerViewController: UIViewController {
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(cancelButton)
         stackView.addArrangedSubview(addTrackerButton)
+        
+        // Показываем количество дней только в режиме редактирования
+        if isEditMode {
+            scrollView.addSubview(daysCountLabel)
+            
+            // Обновляем текст метки
+            daysCountLabel.text = String.localizedStringWithFormat(
+                NSLocalizedString("numberOfDays", comment: "Number of days format"),
+                daysCount
+            )
+        }
     }
-    
+
     func setupConstraints() {
         let tableViewHeight = CGFloat(getTableData().count * 75) + 35
         
+        // Ограничения для scrollView
         NSLayoutConstraint.activate([
-            // Ограничения для scrollView
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            // Ограничения для nameTrackerTextField
-            nameTrackerTextField.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 24),
-            nameTrackerTextField.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16),
-            nameTrackerTextField.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -16),
-            nameTrackerTextField.heightAnchor.constraint(equalToConstant: 75),
-            
-            // Ограничения для tableView
+            scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
+        ])
+        
+        if isEditMode {
+            NSLayoutConstraint.activate([
+                daysCountLabel.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 24),
+                daysCountLabel.centerXAnchor.constraint(equalTo: scrollView.contentLayoutGuide.centerXAnchor),
+                
+                nameTrackerTextField.topAnchor.constraint(equalTo: daysCountLabel.bottomAnchor, constant: 24),
+                nameTrackerTextField.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16),
+                nameTrackerTextField.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -16),
+                nameTrackerTextField.heightAnchor.constraint(equalToConstant: 75)
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                nameTrackerTextField.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor, constant: 24),
+                nameTrackerTextField.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 16),
+                nameTrackerTextField.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -16),
+                nameTrackerTextField.heightAnchor.constraint(equalToConstant: 75)
+            ])
+        }
+        
+        NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: nameTrackerTextField.bottomAnchor, constant: 0),
             tableView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             tableView.heightAnchor.constraint(equalToConstant: tableViewHeight),
             
-            // Ограничения для emojiLabel
             emojiLabel.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
             emojiLabel.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 28),
             
-            // Ограничения для emojiCollectionView
             emojiCollectionView.topAnchor.constraint(equalTo: emojiLabel.bottomAnchor, constant: 24),
             emojiCollectionView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 18),
             emojiCollectionView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -18),
             emojiCollectionView.heightAnchor.constraint(equalToConstant: 156),
             
-            // Ограничения для colorLabel
             colorLabel.topAnchor.constraint(equalTo: emojiCollectionView.bottomAnchor, constant: 40),
             colorLabel.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 28),
             
-            // Ограничения для colorCollectionView
             colorCollectionView.topAnchor.constraint(equalTo: colorLabel.bottomAnchor, constant: 24),
             colorCollectionView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 18),
             colorCollectionView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -18),
-            colorCollectionView.heightAnchor.constraint(equalToConstant: 156), 
+            colorCollectionView.heightAnchor.constraint(equalToConstant: 156),
             
-            // Ограничения для stackView
             stackView.topAnchor.constraint(equalTo: colorCollectionView.bottomAnchor, constant: 24),
             stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor, constant: 20),
             stackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor, constant: -20),
             stackView.centerXAnchor.constraint(equalTo: scrollView.contentLayoutGuide.centerXAnchor),
-            stackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -16),
-            
-            
-            scrollView.contentLayoutGuide.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
+            stackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor, constant: -16)
         ])
     }
     
@@ -304,13 +337,27 @@ class BaseAddTrackerViewController: UIViewController {
     
     @objc func addButtonTapped() {
         let tracker = Tracker(
+            id: UUID(),
             name: trackerName ?? "",
             color: trackerColor ?? UIColor(),
             emoji: trackerEmoji ?? "",
-            schedule: trackerSchedule
+            schedule: trackerSchedule,
+            isPinned: false,
+            originalCategory: trackerCategory ?? ""
         )
         guard let trackerCategory else { return }
-        store.addTrackers(tracker: tracker, for: trackerCategory)
+        if isEditMode {
+            guard let trackerID else { return }
+            store.updateTracker(
+                id: trackerID,
+                newName: tracker.name,
+                newEmoji: tracker.emoji,
+                newColor: tracker.color
+            )
+        } else {
+            // Существующая логика добавления трекера
+            store.addTrackers(tracker: tracker, for: trackerCategory)
+        }
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
     }
     
@@ -429,12 +476,20 @@ extension BaseAddTrackerViewController: UICollectionViewDataSource {
         if collectionView == emojiCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCollectionViewCell", for: indexPath) as? EmojiCollectionViewCell
             cell?.emojiLabel.text = allEmojis[indexPath.row]
+            if allEmojis[indexPath.row] == trackerEmoji {
+                cell?.selectionView.backgroundColor = UIColor(named: "TrackerLightGray")
+                emojiCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            }
             return cell ?? UICollectionViewCell()
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ColorCollectionViewCell", for: indexPath) as? ColorCollectionViewCell
             cell?.colorView.backgroundColor = allColors[indexPath.row]
             cell?.selectionView.layer.borderColor = allColors[indexPath.row].cgColor
             cell?.selectionView.layer.borderColor = cell?.colorView.backgroundColor?.withAlphaComponent(0).cgColor
+            if Transformer.colorToHexString(allColors[indexPath.row]) == Transformer.colorToHexString(trackerColor ?? UIColor()) {
+                cell?.selectionView.layer.borderColor = cell?.colorView.backgroundColor?.withAlphaComponent(0.3).cgColor
+                colorCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            }
             return cell ?? UICollectionViewCell()
         }
     }

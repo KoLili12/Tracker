@@ -31,6 +31,7 @@ final class TrackerStore: NSObject {
         let fetchRequest = TrackerCoreData.fetchRequest()
         
         fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "isPinned", ascending: false),
             NSSortDescriptor(key: "category.header", ascending: false),
             NSSortDescriptor(key: "createdAt", ascending: false)
         ]
@@ -57,6 +58,58 @@ final class TrackerStore: NSObject {
     
     override init() {
         self.context = CoreDataManager.shared.context
+    }
+    
+    private func pinTracker(_ tracker: TrackerCoreData) {
+        // Находим или создаем категорию "Закрепленные"
+        let pinnedCategoryName = "pinned"
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "header == %@", pinnedCategoryName)
+        
+        do {
+            let categories = try context.fetch(request)
+            let pinnedCategory: TrackerCategoryCoreData
+            
+            if let existingCategory = categories.first {
+                pinnedCategory = existingCategory
+            } else {
+                // Создаем категорию "Закрепленные"
+                pinnedCategory = TrackerCategoryCoreData(context: context)
+                pinnedCategory.id = UUID()
+                pinnedCategory.header = pinnedCategoryName
+            }
+            
+            tracker.isPinned = true
+            tracker.category = pinnedCategory
+            
+        } catch {
+            print("Ошибка при закреплении трекера: \(error)")
+        }
+    }
+
+    private func unpinTracker(_ tracker: TrackerCoreData) {
+        guard let originalCategoryName = tracker.originalCategory else {
+            print("Не найдена исходная категория для трекера")
+            return
+        }
+        
+        // Находим исходную категорию
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "header == %@", originalCategoryName)
+        
+        do {
+            let categories = try context.fetch(request)
+            guard let originalCategory = categories.first else {
+                print("Исходная категория \(originalCategoryName) не найдена")
+                return
+            }
+            
+            tracker.isPinned = false
+            tracker.category = originalCategory
+            
+        } catch {
+            print("Ошибка при откреплении трекера: \(error)")
+        }
     }
     
     // MARK: - Internal functions
@@ -95,6 +148,8 @@ final class TrackerStore: NSObject {
             trackerCoreData.emoji = tracker.emoji
             trackerCoreData.colorHex = Transformer.colorToHexString(tracker.color)
             trackerCoreData.schedule = Transformer.scheduleToString(tracker.schedule)
+            trackerCoreData.isPinned = tracker.isPinned
+            trackerCoreData.originalCategory = categoryName
             
             // Связываем трекер с категорией
             trackerCoreData.category = categoryCoreData
@@ -102,6 +157,38 @@ final class TrackerStore: NSObject {
         } catch {
             print("Ошибка при добавлении трекера: \(error)")
         }
+    }
+    
+    func deleteTracker(index: IndexPath) {
+        let tracker = fetchedResultsController.object(at: index)
+        context.delete(tracker)
+        CoreDataManager.shared.saveContext()
+    }
+    
+    func updateTracker(id: UUID, newName: String, newEmoji: String, newColor: UIColor) {
+        guard let tracker = fetchedResultsController.fetchedObjects?.first(where: { $0.id == id }) else {
+            print("Трекер с ID \(id) не найден")
+            return
+        }
+        tracker.name = newName
+        tracker.emoji = newEmoji
+        tracker.colorHex = Transformer.colorToHexString(newColor)
+        CoreDataManager.shared.saveContext()
+    }
+    
+    func pinUnpinTracker(id: UUID) {
+        guard let tracker = fetchedResultsController.fetchedObjects?.first(where: { $0.id == id }) else {
+            print("Трекер с ID \(id) не найден")
+            return
+        }
+        if tracker.isPinned {
+            // Открепляем: возвращаем в исходную категорию
+            unpinTracker(tracker)
+        } else {
+            // Закрепляем: перемещаем в категорию "Закрепленные"
+            pinTracker(tracker)
+        }
+        CoreDataManager.shared.saveContext()
     }
     
     func fetchTrackers() -> [Tracker] {
