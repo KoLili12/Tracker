@@ -62,3 +62,7 @@
 "onboardingPage1" = "Отслеживайте только то, что хотите";
 "onboardingPage2" = "Даже если это не литры воды и йога";
 "onboardingButtonText" = "Вот это технологии!";
+
+"statistics" = "Статистика";
+"statisticsPlugText" = "Анализировать пока нечего";
+"trackersCompleted" = "Трекеров завершено";

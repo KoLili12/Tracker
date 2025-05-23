@@ -61,3 +61,7 @@
 "onboardingPage1" = "Track only what you want";
 "onboardingPage2" = "Even if it's not water and yoga";
 "onboardingButtonText" = "Amazing technology!";
+
+"statistics" = "Statistics";
+"statisticsPlugText" = "There is nothing to analyze yet";
+"trackersCompleted" = "Trackers completed";

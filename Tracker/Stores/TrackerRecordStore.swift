@@ -91,4 +91,15 @@ final class TrackerRecordStore: NSObject {
             return 0
         }
     }
+    
+    func countTrackerCompletedTrackers() -> Int {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        do {
+            let records = try context.fetch(request)
+            return records.count
+        } catch {
+            print("Ошибка при подсчете завершенных трекеров: \(error)")
+            return 0
+        }
+    }
 }
