@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import YandexMobileMetrica
 
 final class TabBarViewController: UITabBarController {
     
@@ -57,6 +58,22 @@ final class TabBarViewController: UITabBarController {
             TabBarSeparator.topAnchor.constraint(equalTo: tabBar.topAnchor),
             TabBarSeparator.heightAnchor.constraint(equalToConstant: 0.5)
         ])
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let params : [AnyHashable : Any] = ["screen": "Main"]
+        YMMYandexMetrica.reportEvent("open", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        let params : [AnyHashable : Any] = ["screen": "Main"]
+        YMMYandexMetrica.reportEvent("close", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

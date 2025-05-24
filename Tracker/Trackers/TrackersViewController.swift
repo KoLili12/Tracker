@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import YandexMobileMetrica
 
 final class TrackersViewController: UIViewController {
     
@@ -102,7 +103,29 @@ final class TrackersViewController: UIViewController {
         let label = UILabel()
         label.text = NSLocalizedString("noTrackers", comment: "search")
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-        label.textColor = UIColor(resource: .trackerBlack) // .gray
+        label.textColor = UIColor(resource: .trackerBlack)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private lazy var plugSearchImageView: UIImageView = {
+        let imageView = UIImageView(image: .plugSearch)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            imageView.widthAnchor.constraint(equalToConstant: 80),
+            imageView.heightAnchor.constraint(equalToConstant: 80)
+        ])
+        
+        return imageView
+        
+    }()
+    
+    private lazy var plugSearchLabel: UILabel = {
+        let label = UILabel()
+        label.text = NSLocalizedString("plugSearchText", comment: "plugSearchText")
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textColor = UIColor(resource: .trackerBlack)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -125,11 +148,16 @@ final class TrackersViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: createPlusButton())
         
+        plugSearchImageView.isHidden = true
+        plugSearchLabel.isHidden = true
+        
         view.addSubview(trackerLabel)
         view.addSubview(searchTrackers)
         view.addSubview(collectionView)
         view.addSubview(plugImageView)
         view.addSubview(plugLabel)
+        view.addSubview(plugSearchImageView)
+        view.addSubview(plugSearchLabel)
         collectionView.addSubview(filterButton)
         
         NSLayoutConstraint.activate([
@@ -150,9 +178,20 @@ final class TrackersViewController: UIViewController {
             plugLabel.topAnchor.constraint(equalTo: plugImageView.bottomAnchor, constant: 8),
             plugLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
+            plugSearchImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            plugSearchImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            plugSearchLabel.topAnchor.constraint(equalTo: plugSearchImageView.bottomAnchor, constant: 8),
+            plugSearchLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
             filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
+        if FilterStorage.shared.getSelectedFilter() == "Completed" {
+            isCompleted = true
+        } else {
+            isCompleted = false
+        }
         setDate(date: currentDate)
         collectionView.reloadData()
     }
@@ -202,6 +241,10 @@ final class TrackersViewController: UIViewController {
     // MARK: - @objc private functions
     
     @objc private func didTapPlusButton() {
+        let params : [AnyHashable : Any] = ["screen": "Main", "item": "add_track"]
+        YMMYandexMetrica.reportEvent("click", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
         let vc = ChooseTrackerTypeViewController()
         let nc = UINavigationController(rootViewController: vc)
         present(nc, animated: true)
@@ -224,6 +267,10 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func didTapFilterButton() {
+        let params : [AnyHashable : Any] = ["screen": "Main", "item": "filter"]
+        YMMYandexMetrica.reportEvent("click", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
         let vc = FiltersViewController()
         vc.delegate = self
         let nc = UINavigationController(rootViewController: vc)
@@ -234,7 +281,6 @@ final class TrackersViewController: UIViewController {
     
     private func setDate(date: Date) {
         currentDate = date
-        
         service.filterTrackers(
             for: date,
             searchText: nil,
@@ -250,9 +296,26 @@ final class TrackersViewController: UIViewController {
     
     private func checkStatusPlugViews() {
         let hasTrackers = service.countCategory > 0
-        collectionView.isHidden = !hasTrackers
-        plugImageView.isHidden = hasTrackers
-        plugLabel.isHidden = hasTrackers
+        let hasActiveSearch = !(searchTrackers.text?.isEmpty ?? true)
+        let hasActiveFilter = FilterStorage.shared.getSelectedFilter() != nil &&
+        FilterStorage.shared.getSelectedFilter() != "All trackers"
+        
+        let shouldShowMainPlug = !hasTrackers && !hasActiveSearch && !hasActiveFilter
+        
+        plugImageView.isHidden = !shouldShowMainPlug
+        plugLabel.isHidden = !shouldShowMainPlug
+    }
+    
+    private func checkStatusPlugSearchViews() {
+        let hasActiveSearch = !(searchTrackers.text?.isEmpty ?? true)
+        let hasActiveFilter = FilterStorage.shared.getSelectedFilter() != nil &&
+        FilterStorage.shared.getSelectedFilter() != "All trackers"
+        let hasResults = service.countCategory > 0
+        
+        let shouldShowSearchPlug = (hasActiveSearch || hasActiveFilter) && !hasResults
+        
+        plugSearchImageView.isHidden = !shouldShowSearchPlug
+        plugSearchLabel.isHidden = !shouldShowSearchPlug
     }
 }
 
@@ -337,6 +400,10 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
                     self?.service.pinUnpinTracker(id: tracker.id)
                 },
                 UIAction(title: NSLocalizedString("edit", comment: "edit")) { [weak self] _ in
+                    let params : [AnyHashable : Any] = ["screen": "Main", "item": "edit"]
+                    YMMYandexMetrica.reportEvent("click", parameters: params, onFailure: { error in
+                        print("REPORT ERROR: %@", error.localizedDescription)
+                    })
                     
                     let viewController: BaseAddTrackerViewController
                     
@@ -370,6 +437,10 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
                     self?.present(navigationController, animated: true)
                 },
                 UIAction(title: NSLocalizedString("delete", comment: "delete"), attributes: .destructive) { [weak self] _ in
+                    let params : [AnyHashable : Any] = ["screen": "Main", "item": "delete"]
+                    YMMYandexMetrica.reportEvent("click", parameters: params, onFailure: { error in
+                        print("REPORT ERROR: %@", error.localizedDescription)
+                    })
                     self?.service.deleteTracker(index: indexPath)
                 },
             ])
@@ -381,6 +452,10 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
 extension TrackersViewController: TrackersViewControllerDelegate {
     func updateDaysCount(cell: TrackerCollectionViewCell) {
+        let params : [AnyHashable : Any] = ["screen": "Main", "item": "track"]
+        YMMYandexMetrica.reportEvent("click", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
         if Date() < currentDate {
             print("Нельзя отметить трекер на будущий день")
             return
@@ -402,6 +477,7 @@ extension TrackersViewController: TrackersViewControllerDelegate {
 
 extension TrackersViewController: TrackerUpdateDelegate {
     func updateFullCollection() {
+        checkStatusPlugSearchViews()
         collectionView.reloadData()
     }
     

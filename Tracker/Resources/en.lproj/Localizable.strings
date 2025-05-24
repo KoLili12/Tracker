@@ -17,6 +17,7 @@
 "pin" = "Pin";
 "unpin" = "Unpin";
 "pinned" = "Pinned";
+"plugSearchText" = "Nothing was found";
 
 "createTracker" = "Create tracker";
 "addHabit" = "Add habit";
