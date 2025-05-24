@@ -8,11 +8,13 @@
 import UIKit
 
 struct Tracker {
-    let id: UUID = UUID()
+    let id: UUID
     let name: String
     let color: UIColor
     let emoji: String
     let schedule: Set<WeekDay>
+    let isPinned: Bool
+    let originalCategory: String
 }
 
 enum WeekDay: Int {

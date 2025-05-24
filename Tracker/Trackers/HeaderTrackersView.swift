@@ -14,7 +14,7 @@ final class HeaderTrackersView: UICollectionReusableView {
     lazy var headerTitle: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 19, weight: .bold)
-        label.textColor = .black
+        label.textColor = .trackerBlack
         return label
     }()
     

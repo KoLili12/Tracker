@@ -21,7 +21,7 @@ final class CategoriesViewModel {
         }
     }
     
-    private let store = TrackerCategoryStore()
+    private let store = TrackerCategoryStore(trackerStore: TrackerStore())
     
     init() {
         store.delegate = self
@@ -32,12 +32,12 @@ final class CategoriesViewModel {
     }
     
     func fetchAllCategories() -> [TrackerCategory] {
-        return store.fetchAllCategories()
+        return store.fetchAllCategories().filter { $0.header != "pinned"}
     }
 }
 
 extension CategoriesViewModel: TrackerCategoryStoreDelegate {
     func updateCategories() {
-        allCategories = fetchAllCategories()
+        allCategories = store.fetchAllCategories().filter { $0.header != "pinned"}
     }
 }

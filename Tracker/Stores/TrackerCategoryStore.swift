@@ -14,7 +14,7 @@ final class TrackerCategoryStore: NSObject {
     // MARK: - Private properties
     
     private let context: NSManagedObjectContext
-    private let trackerStore = TrackerStore()
+    private weak var trackerStore: TrackerStore?
     
     weak var delegate: TrackerCategoryStoreDelegate?
     
@@ -40,8 +40,10 @@ final class TrackerCategoryStore: NSObject {
     
     // MARK: - Lifecycle methods
     
-    override init() {
+    init(trackerStore: TrackerStore) {
+        self.trackerStore = trackerStore
         self.context = CoreDataManager.shared.context
+        super.init()
     }
     
     // MARK: - Internal functions
@@ -64,21 +66,26 @@ final class TrackerCategoryStore: NSObject {
         newCategory.header = name
         CoreDataManager.shared.saveContext()
     }
-    
+
     func findCategory(at index: Int) -> TrackerCategory? {
-        let nameCategory = fetchedResultsController.fetchedObjects?[index]
-        guard let header = nameCategory?.header else { return nil }
+        guard let trackerStore = trackerStore,
+              let sections = trackerStore.fetchedResultsController.sections,
+              index < sections.count else {
+            print("Ошибка: индекс \(index) выходит за границы массива секций (количество: \(trackerStore?.fetchedResultsController.sections?.count ?? 0))")
+            return nil
+        }
+        
+        let nameCategory = sections[index]
+        let header = nameCategory.name
+        
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.predicate = NSPredicate(format: "header == %@", header)
         do {
             let categories = try context.fetch(request)
-            if categories.count > 0 {
-                guard let category = categories.first else {return nil}
-                return try Optional(Transformer.map(from: category))
-            } else {
-                return nil
-            }
+            guard let category = categories.first else { return nil }
+            return try Transformer.map(from: category)
         } catch {
+            print("Ошибка при поиске категории: \(error)")
             return nil
         }
     }

@@ -12,11 +12,11 @@ final class OnboardingViewController: UIPageViewController {
     private lazy var pages: [UIViewController] = {
         let firstPage = PageViewController()
         firstPage.imageView.image = UIImage(resource: .blueImageOnboarding)
-        firstPage.label.text = "Отслеживайте только то, что хотите"
+        firstPage.label.text = NSLocalizedString("onboardingPage1", comment: "Track only what you want")
         
         let secondPage = PageViewController()
         secondPage.imageView.image = UIImage(resource: .redImageOnboarding)
-        secondPage.label.text = "Даже если это не литры воды и йога"
+        secondPage.label.text = NSLocalizedString("onboardingPage2", comment: "Even if it's not water and yoga")
         
         return [firstPage, secondPage]
     }()
@@ -67,7 +67,7 @@ final class OnboardingViewController: UIPageViewController {
     
     private func createTransitionButton() -> UIButton {
         let button = UIButton(type: .system)
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle(NSLocalizedString("onboardingButtonText", comment: "Amazing technology!"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: "TrackerBlack")
