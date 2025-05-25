@@ -189,7 +189,7 @@ final class TrackersViewController: UIViewController {
         ])
         if FilterStorage.shared.getSelectedFilter() == "Completed" {
             isCompleted = true
-        } else {
+        } else if FilterStorage.shared.getSelectedFilter() == "Uncompleted"{
             isCompleted = false
         }
         setDate(date: currentDate)
