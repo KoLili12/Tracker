@@ -31,6 +31,7 @@ final class TrackerStore: NSObject {
         let fetchRequest = TrackerCoreData.fetchRequest()
         
         fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "isPinned", ascending: false),
             NSSortDescriptor(key: "category.header", ascending: false),
             NSSortDescriptor(key: "createdAt", ascending: false)
         ]
@@ -57,6 +58,58 @@ final class TrackerStore: NSObject {
     
     override init() {
         self.context = CoreDataManager.shared.context
+    }
+    
+    private func pinTracker(_ tracker: TrackerCoreData) {
+        // Находим или создаем категорию "Закрепленные"
+        let pinnedCategoryName = "pinned"
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "header == %@", pinnedCategoryName)
+        
+        do {
+            let categories = try context.fetch(request)
+            let pinnedCategory: TrackerCategoryCoreData
+            
+            if let existingCategory = categories.first {
+                pinnedCategory = existingCategory
+            } else {
+                // Создаем категорию "Закрепленные"
+                pinnedCategory = TrackerCategoryCoreData(context: context)
+                pinnedCategory.id = UUID()
+                pinnedCategory.header = pinnedCategoryName
+            }
+            
+            tracker.isPinned = true
+            tracker.category = pinnedCategory
+            
+        } catch {
+            print("Ошибка при закреплении трекера: \(error)")
+        }
+    }
+
+    private func unpinTracker(_ tracker: TrackerCoreData) {
+        guard let originalCategoryName = tracker.originalCategory else {
+            print("Не найдена исходная категория для трекера")
+            return
+        }
+        
+        // Находим исходную категорию
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.predicate = NSPredicate(format: "header == %@", originalCategoryName)
+        
+        do {
+            let categories = try context.fetch(request)
+            guard let originalCategory = categories.first else {
+                print("Исходная категория \(originalCategoryName) не найдена")
+                return
+            }
+            
+            tracker.isPinned = false
+            tracker.category = originalCategory
+            
+        } catch {
+            print("Ошибка при откреплении трекера: \(error)")
+        }
     }
     
     // MARK: - Internal functions
@@ -95,6 +148,8 @@ final class TrackerStore: NSObject {
             trackerCoreData.emoji = tracker.emoji
             trackerCoreData.colorHex = Transformer.colorToHexString(tracker.color)
             trackerCoreData.schedule = Transformer.scheduleToString(tracker.schedule)
+            trackerCoreData.isPinned = tracker.isPinned
+            trackerCoreData.originalCategory = categoryName
             
             // Связываем трекер с категорией
             trackerCoreData.category = categoryCoreData
@@ -102,6 +157,38 @@ final class TrackerStore: NSObject {
         } catch {
             print("Ошибка при добавлении трекера: \(error)")
         }
+    }
+    
+    func deleteTracker(index: IndexPath) {
+        let tracker = fetchedResultsController.object(at: index)
+        context.delete(tracker)
+        CoreDataManager.shared.saveContext()
+    }
+    
+    func updateTracker(id: UUID, newName: String, newEmoji: String, newColor: UIColor) {
+        guard let tracker = fetchedResultsController.fetchedObjects?.first(where: { $0.id == id }) else {
+            print("Трекер с ID \(id) не найден")
+            return
+        }
+        tracker.name = newName
+        tracker.emoji = newEmoji
+        tracker.colorHex = Transformer.colorToHexString(newColor)
+        CoreDataManager.shared.saveContext()
+    }
+    
+    func pinUnpinTracker(id: UUID) {
+        guard let tracker = fetchedResultsController.fetchedObjects?.first(where: { $0.id == id }) else {
+            print("Трекер с ID \(id) не найден")
+            return
+        }
+        if tracker.isPinned {
+            // Открепляем: возвращаем в исходную категорию
+            unpinTracker(tracker)
+        } else {
+            // Закрепляем: перемещаем в категорию "Закрепленные"
+            pinTracker(tracker)
+        }
+        CoreDataManager.shared.saveContext()
     }
     
     func fetchTrackers() -> [Tracker] {
@@ -116,16 +203,46 @@ final class TrackerStore: NSObject {
         return trackers
     }
     
-    func filterTrackers(for date: Date) {
-        let calendar = Calendar.current
-        guard let weekday = WeekDay(rawValue: calendar.component(.weekday, from: date)) else {
-            return
+    func filterTrackers(for date: Date? = nil, searchText: String? = nil, category: String? = nil, completed: Bool? = nil) {
+        
+        var predicates: [NSPredicate] = []
+        
+        if let date = date {
+            let calendar = Calendar.current
+            guard let weekday = WeekDay(rawValue: calendar.component(.weekday, from: date)) else {
+                return
+            }
+            
+            let weekdayString = String(weekday.rawValue)
+            predicates.append(NSPredicate(format: "schedule CONTAINS %@", weekdayString))
+        }
+        if let searchText, !searchText.isEmpty {
+            predicates.append(NSPredicate(format: "name CONTAINS[cd] %@", searchText))
+        }
+        if let category = category {
+            predicates.append(NSPredicate(format: "category.header == %@", category))
+        }
+        if let completed = completed, let date = date {
+            let calendar = Calendar.current
+            let startOfDay = calendar.startOfDay(for: date)
+            let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+            
+            if completed {
+                // Показать только выполненные трекеры на эту дату
+                predicates.append(NSPredicate(format: "ANY records.date >= %@ AND ANY records.date < %@",
+                                            startOfDay as NSDate, endOfDay as NSDate))
+            } else {
+                // Показать только не выполненные трекеры на эту дату
+                predicates.append(NSPredicate(format: "SUBQUERY(records, $record, $record.date >= %@ AND $record.date < %@).@count == 0",
+                                            startOfDay as NSDate, endOfDay as NSDate))
+            }
         }
         
-        let weekdayString = String(weekday.rawValue)
-        let predicate = NSPredicate(format: "schedule CONTAINS %@", weekdayString)
-        
-        fetchedResultsController.fetchRequest.predicate = predicate
+        if predicates.isEmpty {
+            fetchedResultsController.fetchRequest.predicate = nil
+        } else {
+            fetchedResultsController.fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        }
         
         do {
             try fetchedResultsController.performFetch()

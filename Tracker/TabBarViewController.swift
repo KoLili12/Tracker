@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import YandexMobileMetrica
 
 final class TabBarViewController: UITabBarController {
     
@@ -13,7 +14,11 @@ final class TabBarViewController: UITabBarController {
     
     private lazy var TabBarSeparator: UIView = {
         let lineView = UIView(frame: CGRect(x: 0, y: 0, width: tabBar.frame.width, height: 1))
-        lineView.backgroundColor = UIColor(named: "TrackerGray")
+        if traitCollection.userInterfaceStyle == .light {
+            lineView.backgroundColor = UIColor(named: "TrackerGray")
+        } else {
+            lineView.backgroundColor = .black
+        }
         lineView.translatesAutoresizingMaskIntoConstraints = false
         return lineView
     }()
@@ -29,13 +34,13 @@ final class TabBarViewController: UITabBarController {
         
         
         navigationVC.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: NSLocalizedString("tabBarTrackers", comment: "tabBarTrackers"),
             image: UIImage(named: "TrackerTabBarItem"),
             selectedImage: nil
         )
         
         statisticsViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: NSLocalizedString("tabBarStatistics", comment: "tabBarStatistics"),
             image: UIImage(named: "StatisticsTabBarItem"),
             selectedImage: nil
         )
@@ -54,4 +59,32 @@ final class TabBarViewController: UITabBarController {
             TabBarSeparator.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let params : [AnyHashable : Any] = ["screen": "Main"]
+        YMMYandexMetrica.reportEvent("open", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        let params : [AnyHashable : Any] = ["screen": "Main"]
+        YMMYandexMetrica.reportEvent("close", parameters: params, onFailure: { error in
+            print("REPORT ERROR: %@", error.localizedDescription)
+        })
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        if traitCollection.userInterfaceStyle == .light {
+            TabBarSeparator.backgroundColor = UIColor(named: "TrackerGray")
+        } else {
+            TabBarSeparator.backgroundColor = .black
+        }
+    }
+    
 }

@@ -15,6 +15,8 @@ protocol TrackersServiceProtocol {
     func countTrackerInCategory(index: Int) -> Int
     func getCategories() -> [TrackerCategory]
     func addTrackers(tracker: Tracker, for categoryName: String)
+    func deleteTracker(index: IndexPath)
+    func pinUnpinTracker(id: UUID)
     func getCountСategories() -> Int
     func getCountTrackers(in categoryIndex: Int) -> Int
     func getCategory(index: Int) -> TrackerCategory
@@ -22,5 +24,5 @@ protocol TrackersServiceProtocol {
     func deleteCompletedTracker(tracker: Tracker, date: Date)
     func isTrackerCompleted(tracker: Tracker, date: Date) -> Bool
     func countTrackerCompletedTrackers(tracker: Tracker) -> Int
-    func filterTrackers(for date: Date)
+    func filterTrackers(for date: Date?, searchText: String?, category: String?, completed: Bool?)
 }

@@ -25,21 +25,27 @@ final class Transformer {
     }
     
     static func map(from trackerCoreData: TrackerCoreData) throws -> Tracker {
-        guard let name = trackerCoreData.name,
+        guard let id = trackerCoreData.id,
+              let name = trackerCoreData.name,
               let emoji = trackerCoreData.emoji,
               let colorHex = trackerCoreData.colorHex,
-              let scheduleString = trackerCoreData.schedule else {
+              let scheduleString = trackerCoreData.schedule,
+              let originalCategory = trackerCoreData.originalCategory else {
             throw TrackerStoreError.decodingErrorInvalidData
         }
         
         let color = hexStringToColor(colorHex)
         let schedule = stringToSchedule(scheduleString)
+        let isPinned = trackerCoreData.isPinned
         
         return Tracker(
+            id: id,
             name: name,
             color: color,
             emoji: emoji,
-            schedule: schedule
+            schedule: schedule,
+            isPinned: isPinned,
+            originalCategory: originalCategory
         )
     }
     

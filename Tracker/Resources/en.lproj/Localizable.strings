@@ -1,0 +1,68 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Николай Жирнов on 14.05.2025.
+  
+*/
+
+"tabBarTrackers" = "Trackers";
+"tabBarStatistics" = "Statistics";
+"trackers" = "Trackers";
+"noTrackers" = "What are we going to track?";
+"search" = "Search";
+"filters" = "Filters";
+"delete" = "Delete";
+"edit" = "Edit";
+"pin" = "Pin";
+"unpin" = "Unpin";
+"pinned" = "Pinned";
+"plugSearchText" = "Nothing was found";
+
+"createTracker" = "Create tracker";
+"addHabit" = "Add habit";
+"irregularEvent" = "Irregular event";
+
+"newHabit" = "New habit";
+"newIrregularEvent" = "New irregular event";
+"editHabit" = "Edit habit";
+"editIrregularEvent" = "Edit irregular event";
+"enterTrackerName" = "Enter tracker name";
+"category" = "Category";
+"schedule" = "Schedule";
+"color" = "Color";
+"cancel" = "Cancel";
+"create" = "Create";
+
+"schedule" = "Schedule";
+"everyday" = "Every day";
+"monday" = "Monday";
+"tuesday" = "Tuesday";
+"wednesday" = "Wednesday";
+"thursday" = "Thursday";
+"friday" = "Friday";
+"saturday" = "Saturday";
+"sunday" = "Sunday";
+"mon" = "Mon";
+"tue" = "Tue";
+"wed" = "Wed";
+"thu" = "Thu";
+"fri" = "Fri";
+"sat" = "Sat";
+"sun" = "Sun";
+"everyday" = "Every day";
+"done" = "Done";
+
+"category" = "Category";
+"newCategory" = "New Category";
+"enterCategoryName" = "Enter category name";
+"addCategory" = "Add category";
+"categoriesHint" = "Habits and events can be grouped by meaning";
+
+"onboardingPage1" = "Track only what you want";
+"onboardingPage2" = "Even if it's not water and yoga";
+"onboardingButtonText" = "Amazing technology!";
+
+"statistics" = "Statistics";
+"statisticsPlugText" = "There is nothing to analyze yet";
+"trackersCompleted" = "Trackers completed";

@@ -18,11 +18,11 @@ final class AddIrregularEventViewController: BaseAddTrackerViewController {
     }
     
     override func getNavigationTitle() -> String {
-        return "Новое нерегулярное событие"
+        return isEditMode ? NSLocalizedString("editIrregularEvent", comment: "editIrregularEvent") : NSLocalizedString("newIrregularEvent", comment: "newIrregularEvent")
     }
     
     override func getTableData() -> [String] {
-        return ["Категория"]
+        return [NSLocalizedString("category", comment: "category")]
     }
     
     override func configureCellDetails(_ cell: UITableViewCell, at indexPath: IndexPath) {
